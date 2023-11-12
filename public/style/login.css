@@ -1,0 +1,108 @@
+body {
+    margin: 0;
+    font-family: "Noto Sans TC";
+    /* overflow-y: hidden; */
+}
+
+/* header CSS */
+.header {
+    z-index: 1;
+    position: sticky;
+    top: 0px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 75px;
+    border-bottom: 1px solid #E8E8E8;
+    background-color: white;
+}
+.header-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding: 0px 40px 0px 40px;
+}
+.header-title {
+    line-height: 34px;
+    color: rgb(0, 0, 0);
+    font-size: 30px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.header-nav {
+    display: flex;
+    justify-content: flex-end;
+    flex: auto;
+}
+.header-nav_login {
+    padding: 10px;
+    line-height: 14px;
+    color: #666;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* main CSS */
+.main {
+    width: 350px;
+    margin: 0 auto;
+    margin-top: 200px;
+}
+.main-login_title {
+    width: 348px;
+    line-height: 60px;
+    text-align:center;
+    background-color: rgb(230, 229, 229);
+    border: 1px solid #a7a3a3;
+    color: #666;
+    font-size: 21px;
+    font-weight: 500;
+}
+.main-input {
+    width: 348px;
+    border-left: 1px solid #a7a3a3;
+    border-right: 1px solid #a7a3a3;
+    border-bottom: 1px solid #a7a3a3;
+}
+.login-email, .login-password {
+    width: 348px;
+    height: 60px;
+    padding: 14px;
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+    font-size: 17px;
+    font-family: "Noto Sans TC";
+}
+.login-button {
+    width: 350px;
+    height: 60px;
+    padding: 10px;
+    margin-top: 20px;
+    border: 1px solid #a7a3a3;
+    background-color: #706f6f;
+    color: #fff;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+/* footer CSS */
+.footer {
+    position: fixed;
+    bottom: 0;
+    padding-top: 40px;
+    width: 100%;
+    height: 104px;
+    background-color: rgb(151, 147, 147);
+    box-sizing: border-box;
+}
+.footer-container {
+    text-align: center;
+    line-height: 24px;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: "Noto Sans TC";
+}
