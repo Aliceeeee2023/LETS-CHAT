@@ -12,21 +12,17 @@ const server = require('http').createServer(app);
 // HTML 中的 CSS、JS 引入路徑就會變成以 public 資料夾為主，如 href="style/index.css"
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 設置頁面跳轉
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/views/index.html');
-});
+// 引入 routes
+const indexRouter = require('./routes/indexRouter.js');
+const loginRouter = require('./routes/loginRouter.js');
+const chatRouter = require('./routes/chatRouter.js');
+const apiRouter = require('./routes/apiRouter.js');
 
-app.get('/login', (req, res) => {
-    res.sendFile(__dirname + '/views/login.html');
-});
-
-app.get('/chat', (req, res) => {
-    res.sendFile(__dirname + '/views/chat.html');
-});
-
-// 設置網站 API（尚未處理）
-app.get('/api/members', (req, res) => {});
+// 使用 routes
+app.use('/', indexRouter);
+app.use('/login', loginRouter);
+app.use('/chat', chatRouter);
+app.use('/api', apiRouter);
 
 // 設置伺服器（不能用 app.listen 函數，不然會仍然使用 HTTP 進行交互）
 const { Server } = require('socket.io');
