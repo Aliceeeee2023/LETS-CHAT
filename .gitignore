@@ -1,2 +1,7 @@
+# 資料夾
 node_modules/
+
+# 個別檔案
 .env
+Dockerfile
+.dockerignore

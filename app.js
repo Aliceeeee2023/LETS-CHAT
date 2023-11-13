@@ -1,4 +1,4 @@
-// 載入環境變數
+// 載入環境變數（全域可用）
 require('dotenv').config();
 
 // 引入 express、HTTP 模組
@@ -12,17 +12,16 @@ const server = require('http').createServer(app);
 // HTML 中的 CSS、JS 引入路徑就會變成以 public 資料夾為主，如 href="style/index.css"
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 引入 routes
-const indexRouter = require('./routes/indexRouter.js');
-const loginRouter = require('./routes/loginRouter.js');
-const chatRouter = require('./routes/chatRouter.js');
-const apiRouter = require('./routes/apiRouter.js');
+// 處理 JSON 格式資料
+app.use(express.json());
 
-// 使用 routes
-app.use('/', indexRouter);
-app.use('/login', loginRouter);
-app.use('/chat', chatRouter);
-app.use('/api', apiRouter);
+// 引入 routes
+const authRoutes = require('./routes/authRoutes.js');
+const apiRoutes = require('./routes/apiRoutes.js');
+
+// 使用 routes（把 routes 放在 '/' 目錄中）
+app.use('/', authRoutes);
+app.use('/', apiRoutes);
 
 // 設置伺服器（不能用 app.listen 函數，不然會仍然使用 HTTP 進行交互）
 const { Server } = require('socket.io');
