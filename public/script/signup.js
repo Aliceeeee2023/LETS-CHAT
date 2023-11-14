@@ -44,9 +44,10 @@ async function submitSignupForm() {
     } else if (!checkPassword(password)) {
         signupError.textContent = '無效的密碼格式';
     } else {
-            // 將表單資料清空
-            emailInput.value = '';
-            passwordInput.value = '';
+        // 將表單資料清空
+        emailInput.value = '';
+        passwordInput.value = '';
+        
         try {
             const response = await fetch('/api/signup', {
                 method: 'POST',

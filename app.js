@@ -17,11 +17,13 @@ app.use(express.json());
 
 // 引入 routes
 const authRoutes = require('./routes/authRoutes.js');
-const apiRoutes = require('./routes/apiRoutes.js');
+const signupRoutes = require('./routes/signupRoutes.js');
+const loginRoutes = require('./routes/loginRoutes.js');
 
 // 使用 routes（把 routes 放在 '/' 目錄中）
 app.use('/', authRoutes);
-app.use('/', apiRoutes);
+app.use('/', signupRoutes);
+app.use('/', loginRoutes);
 
 // 設置伺服器（不能用 app.listen 函數，不然會仍然使用 HTTP 進行交互）
 const { Server } = require('socket.io');
