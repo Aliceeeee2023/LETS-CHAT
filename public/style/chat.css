@@ -1,50 +1,4 @@
-body {
-    margin: 0;
-    font-family: "Noto Sans TC";
-    /* overflow-y: hidden; */
-}
-
-/* header CSS */
-.header {
-    z-index: 1;
-    position: sticky;
-    top: 0px;
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    height: 75px;
-    border-bottom: 1px solid #E8E8E8;
-    background-color: white;
-}
-.header-container {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    padding: 0px 40px 0px 40px;
-}
-.header-title {
-    line-height: 34px;
-    color: rgb(0, 0, 0);
-    font-size: 30px;
-    font-weight: 700;
-    cursor: pointer;
-}
-.header-nav {
-    display: flex;
-    justify-content: flex-end;
-    flex: auto;
-}
-.header-nav_logout {
-    padding: 10px;
-    line-height: 14px;
-    color: #666;
-    font-size: 18px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-/* main CSS */
+/* 聊天主視窗 CSS */
 .chat-window {
     width: 800px;
     height: 500px;
@@ -56,23 +10,15 @@ body {
     border-radius: 8px;
     overflow: hidden;
 }
+
+/* 共用 CSS */
 .chat-header, .chat-message, .chat-footer {
     display: flex;
     border-bottom: 1px solid #8d8c8c;
     box-sizing: border-box;
 }
-.chat-header {
-    height: 50px;
-    background-color: rgb(198, 203, 204);
-}
-.chat-message {
-    height: 400px;
-}
-.chat-footer {
-    height: 50px;
-}
 .chat-header_user, .chat-messages_list, .chat-footer_bar {
-    width: 300px;
+    width: 280px;
     padding: 10px;
     border-right: 1px solid #8d8c8c;
     box-sizing: border-box;
@@ -82,28 +28,50 @@ body {
     padding: 10px;
     box-sizing: border-box;
 }
+
+/* chat-header */
+.chat-header {
+    height: 50px;
+    background-color: rgb(198, 203, 204);
+}
+
+/* chat-message */
+.chat-message {
+    height: 400px;
+}
+.chat-friendList, .chat-addFriend {
+    display: none;
+}
+.friend_input {
+    width: 180px;
+    height: 18px;
+    padding: 5px;
+    font-family: "Noto Sans TC";
+}
+.addFriend-button {
+    height: 30px;
+    box-sizing: border-box;
+}
+
+/* chat-footer */
+.chat-footer {
+    height: 50px;
+}
+.chat-footer_bar {
+    display: flex;
+}
+.icon_messagesList, .icon_friendList, .icon_addFriend {
+    flex: 1;
+    margin: 0px 5px 0px 5px;
+    padding: 0px 5px 0px 5px;
+    text-align: center;
+    color: #575454;
+    border: 1px solid #8d8c8c;
+    cursor: pointer;
+}
 .chat-input {
     width: 100%;
     border: none;
     box-sizing: border-box;
-    font-family: "Noto Sans TC";
-}
-
-/* footer CSS */
-.footer {
-    position: fixed;
-    bottom: 0;
-    padding-top: 40px;
-    width: 100%;
-    height: 104px;
-    background-color: rgb(151, 147, 147);
-    box-sizing: border-box;
-}
-.footer-container {
-    text-align: center;
-    line-height: 24px;
-    color: #FFF;
-    font-size: 16px;
-    font-weight: 700;
     font-family: "Noto Sans TC";
 }

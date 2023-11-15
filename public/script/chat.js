@@ -26,3 +26,55 @@ socket.on('chat message', msg => {
 
     ul.appendChild(li);
 });
+
+// 進入頁面當下判斷是否有登入
+const token = localStorage.getItem("token");
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.style.display = 'none';
+    checkUsers(token);
+});
+
+async function checkUsers(token) {
+    try {
+        let response = await fetch("/api/login", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+        });
+
+        if (response.status === 200) {
+            document.body.style.display = 'block';         
+        } else if (response.status === 400) {
+            window.location.href = '/';
+            console.error('未登入帳號');
+        } else {
+            window.location.href = '/';
+            console.error('伺服器內部錯誤');
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
+    };
+};
+
+// 處理登出
+const logout = document.querySelector('.header-nav_logout');
+
+logout.addEventListener('click', () => {
+    localStorage.removeItem("token");
+    window.location.reload();
+});
+
+// 設置上方左側清單
+const MessagesList = document.querySelector('.chat-messagesList');
+const FriendList = document.querySelector('.chat-friendList');
+const AddFriend = document.querySelector('.chat-addFriend');
+
+// 設置下方按鈕
+const iconAddFriend = document.querySelector('.icon_addFriend');
+
+iconAddFriend.addEventListener('click', () => {
+    MessagesList.style.display = "none";
+    AddFriend.style.display = "block";    
+});

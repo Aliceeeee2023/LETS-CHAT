@@ -29,10 +29,6 @@ async function submitloginForm() {
     if (!email || !password) {
         loginError.textContent = '登入資料不可為空';
     } else {
-        // 將表單資料清空
-        emailInput.value = '';
-        passwordInput.value = '';
-
         try {
             const response = await fetch('/api/login', {
                 method: 'PUT',
@@ -43,10 +39,20 @@ async function submitloginForm() {
             const data = await response.json();           
 
             if (response.status === 200) {
+                // 將 token 放到 localStorage
+                localStorage.setItem('token', data.token);
+                document.body.style.display = 'none';
+
                 window.location.href = '/chat';
             } else if (response.status === 400) {
+                emailInput.value = '';
+                passwordInput.value = '';
+
                 loginError.textContent = data.error;                
             } else if (response.status === 500) {
+                emailInput.value = '';
+                passwordInput.value = '';
+
                 loginError.textContent = '登入失敗，請聯繫客服';
             };
 
@@ -54,5 +60,36 @@ async function submitloginForm() {
             console.error('錯誤：', error);
             loginError.textContent = '登入失敗，請聯繫客服';
         };
+    };
+};
+
+// 進入頁面當下判斷是否有登入（跟 Signup 判斷完全相同）
+const token = localStorage.getItem("token");
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.style.display = 'none';
+    checkUsers(token);
+});
+
+async function checkUsers(token) {
+    try {
+        let response = await fetch("/api/login", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+        });
+
+        if (response.status === 200) {
+            window.location.href = '/chat';
+        } else if (response.status === 400) {
+            document.body.style.display = 'block';
+            console.error('未登入帳號');
+        } else {
+            document.body.style.display = 'block';
+            console.error('伺服器內部錯誤');
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
     };
 };

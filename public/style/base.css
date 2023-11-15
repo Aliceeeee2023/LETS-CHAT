@@ -1,0 +1,64 @@
+body {
+    margin: 0;
+    font-family: "Noto Sans TC";
+    /* overflow-y: hidden; */
+}
+
+/* header CSS */
+.header {
+    z-index: 1;
+    position: sticky;
+    top: 0px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 75px;
+    border-bottom: 1px solid #E8E8E8;
+    background-color: white;
+}
+.header-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding: 0px 40px 0px 40px;
+}
+.header-title {
+    line-height: 34px;
+    color: rgb(0, 0, 0);
+    font-size: 30px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.header-nav {
+    display: flex;
+    justify-content: flex-end;
+    flex: auto;
+}
+.header-nav_signup, .header-nav_login, .header-nav_chat, .header-nav_logout {
+    padding: 10px;
+    line-height: 14px;
+    color: #666;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* footer CSS */
+.footer {
+    position: fixed;
+    bottom: 0;
+    padding-top: 40px;
+    width: 100%;
+    height: 104px;
+    background-color: rgb(151, 147, 147);
+    box-sizing: border-box;
+}
+.footer-container {
+    text-align: center;
+    line-height: 24px;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: "Noto Sans TC";
+}

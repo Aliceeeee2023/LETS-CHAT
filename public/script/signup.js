@@ -71,3 +71,34 @@ async function submitSignupForm() {
         };
     };
 };
+
+// 進入頁面當下判斷是否有登入（跟 Login 判斷完全相同）
+const token = localStorage.getItem("token");
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.style.display = 'none';
+    checkUsers(token);
+});
+
+async function checkUsers(token) {
+    try {
+        let response = await fetch("/api/login", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+        });
+
+        if (response.status === 200) {
+            window.location.href = '/chat';
+        } else if (response.status === 400) {
+            document.body.style.display = 'block';
+            console.error('未登入帳號');
+        } else {
+            document.body.style.display = 'block';
+            console.error('伺服器內部錯誤');
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
+    };
+};

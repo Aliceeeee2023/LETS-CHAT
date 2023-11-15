@@ -4,6 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta charset="utf-8" />
         <title>LET'S CHAT</title>
+        <link rel="stylesheet" type="text/css" href="style/base.css" />
         <link rel="stylesheet" type="text/css" href="style/chat.css" />
     </head>
     <body>
@@ -24,14 +25,25 @@
             </div>
         
             <div class="chat-message">
-                <div class="chat-messages_list">Conversation List</div>
+                <div class="chat-messages_list">
+                    <div class="chat-messagesList">Conversation List</div>
+                    <div class="chat-friendList">Friend List</div>
+                    <div class="chat-addFriend">
+                        <span class="chat-addFriend_input"><input type="text" class="friend_input" placeholder="Search friends"></span>
+                        <span><button class="addFriend-button">Search</button></span>
+                    </div>
+                </div>                
                 <div class="chat-messages_content">
                     <ul class="ul"></ul>
                 </div>
             </div>
         
             <div class="chat-footer">
-                <div class="chat-footer_bar">Toolbar</div>
+                <div class="chat-footer_bar">
+                    <div class="icon_messagesList">聊天列表</div>
+                    <div class="icon_friendList">好友列表</div>
+                    <div class="icon_addFriend">加好友</div>
+                </div>
                 <div class="chat-footer_input"><input type="text" class="chat-input" placeholder="Type your message"></div>
                 <button class="chat-button">Send</button>
             </div>
