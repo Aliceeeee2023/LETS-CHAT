@@ -28,7 +28,7 @@ socket.on('chat message', msg => {
 });
 
 // 進入頁面當下判斷是否有登入
-const token = localStorage.getItem("token");
+const token = localStorage.getItem('token');
 
 document.addEventListener('DOMContentLoaded', () => {
     document.body.style.display = 'none';
@@ -37,10 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function checkUsers(token) {
     try {
-        let response = await fetch("/api/login", {
-            method: "GET",
+        let response = await fetch('/api/login', {
+            method: 'GET',
             headers: {
-                "Authorization": `Bearer ${token}`
+                'Authorization': `Bearer ${token}`
             },
         });
 
@@ -62,7 +62,7 @@ async function checkUsers(token) {
 const logout = document.querySelector('.header-nav_logout');
 
 logout.addEventListener('click', () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     window.location.reload();
 });
 
@@ -75,6 +75,40 @@ const AddFriend = document.querySelector('.chat-addFriend');
 const iconAddFriend = document.querySelector('.icon_addFriend');
 
 iconAddFriend.addEventListener('click', () => {
-    MessagesList.style.display = "none";
-    AddFriend.style.display = "block";    
+    MessagesList.style.display = 'none';
+    AddFriend.style.display = 'block';    
 });
+
+// 添加好友邏輯（11/16）
+const AddFriendButton = document.querySelector('.addFriend-button');
+
+AddFriendButton.addEventListener('click', () => {
+    addFriend(token);
+});
+
+async function addFriend(token) {
+    let friendInput = document.querySelector('.friend_input');
+    let friendEmail = friendInput.value;
+
+    try {
+        let response = await fetch('/api/addFriend', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ friendEmail }),
+        });
+
+        const data = await response.json();
+        let addFriendResult = document.querySelector('.addFriend-result');
+
+        if (response.status === 200) {
+            addFriendResult.textContent = data.message;
+        } else {
+            addFriendResult.textContent = data.error;
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
+    };
+};

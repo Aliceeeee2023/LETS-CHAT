@@ -25,7 +25,7 @@ router.put('/api/login', limiter, async (req, res) => {
 
     // 將資料放入資料庫判斷及處理
     try {
-        const checkLoginData = 'SELECT email, password FROM users WHERE email = ?';
+        const checkLoginData = 'SELECT id, email, password FROM users WHERE email = ?';
         const LoginResults = await db.query(checkLoginData, [email]);
 
         // 透過資料長度判斷帳號是否已經註冊
@@ -34,12 +34,13 @@ router.put('/api/login', limiter, async (req, res) => {
         };
         
         // 使用 console.log(Object.keys(LoginResults[0])) 確認屬性名稱為['0']
+        let dbId = LoginResults[0]['0'].id;
         let dbEmail = LoginResults[0]['0'].email;
         let dbPassword = LoginResults[0]['0'].password;
         
         if (email === dbEmail && password === dbPassword) {
             // 登入成功後設置 token 並回傳
-            const token = jwt.sign({ email: dbEmail }, jwtSecretKey, { expiresIn: '1d' });
+            const token = jwt.sign({ id: dbId, email: dbEmail }, jwtSecretKey, { expiresIn: '1d' });
 
             return res.status(200).json({ "token": token });
         } else if (email === dbEmail && password !== dbPassword) {
@@ -84,7 +85,7 @@ function authToken(req, res, next) {
         };
 
         // 將解碼後的 email 儲存在 req 中，供後續使用
-        // 接著呼叫 next() 繼續後續作業
+        // 接著呼叫 next() 繼續後續作業  
         req.email = decoded.email;
         next();
     });

@@ -73,7 +73,7 @@ async function submitSignupForm() {
 };
 
 // 進入頁面當下判斷是否有登入（跟 Login 判斷完全相同）
-const token = localStorage.getItem("token");
+const token = localStorage.getItem('token');
 
 document.addEventListener('DOMContentLoaded', () => {
     document.body.style.display = 'none';
@@ -82,10 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function checkUsers(token) {
     try {
-        let response = await fetch("/api/login", {
-            method: "GET",
+        let response = await fetch('/api/login', {
+            method: 'GET',
             headers: {
-                "Authorization": `Bearer ${token}`
+                'Authorization': `Bearer ${token}`
             },
         });
 

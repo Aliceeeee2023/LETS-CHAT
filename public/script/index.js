@@ -1,13 +1,13 @@
 const chat = document.querySelector('.header-nav_chat');
 const logout = document.querySelector('.header-nav_logout');
-const token = localStorage.getItem("token");
+const token = localStorage.getItem('token');
 
 chat.addEventListener('click', () => {
     window.location.href = '/chat';
 });
 
 logout.addEventListener('click', () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     window.location.reload();
 });
 
@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function checkUsers(token) {
     try {
-        let response = await fetch("/api/login", {
-            method: "GET",
+        let response = await fetch('/api/login', {
+            method: 'GET',
             headers: {
-                "Authorization": `Bearer ${token}`
+                'Authorization': `Bearer ${token}`
             },
         });
 

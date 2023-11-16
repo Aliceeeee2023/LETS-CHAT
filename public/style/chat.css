@@ -52,6 +52,11 @@
     height: 30px;
     box-sizing: border-box;
 }
+.addFriend-result {
+    margin: 10px;
+    color: red;
+    font-weight: 500;
+}
 
 /* chat-footer */
 .chat-footer {
