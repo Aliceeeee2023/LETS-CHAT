@@ -26,12 +26,16 @@
         
             <div class="chat-message">
                 <div class="chat-messages_list">
-                    <div class="chat-messagesList">Conversation List</div>
-                    <div class="chat-friendList">Friend List</div>
+                    <div class="chat-messagesList"></div> <!-- 列表用 JS 自動生成 -->
+                    <div class="chat-friendList"></div> <!-- 列表用 JS 自動生成 -->
                     <div class="chat-addFriend">
-                        <span class="chat-addFriend_input"><input type="text" class="friend_input" placeholder="Search friends"></span>
-                        <span><button class="addFriend-button">Search</button></span>
-                        <div class="addFriend-result"></div>
+                        <div class="addFriend-search">
+                            <span class="chat-addFriend_input"><input type="text" class="friend_input" placeholder="Search friends"></span>
+                            <span><button class="addFriend-button">Search</button></span>
+                            <div class="addFriend-result"></div>
+                        </div>
+                        <div class="addFriend-title">待確認好友名單</div>
+                        <div class="addFriend-check"></div>
                     </div>
                 </div>                
                 <div class="chat-messages_content">

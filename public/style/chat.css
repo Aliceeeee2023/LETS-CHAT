@@ -17,9 +17,14 @@
     border-bottom: 1px solid #8d8c8c;
     box-sizing: border-box;
 }
-.chat-header_user, .chat-messages_list, .chat-footer_bar {
+.chat-header_user, .chat-footer_bar {
     width: 280px;
     padding: 10px;
+    border-right: 1px solid #8d8c8c;
+    box-sizing: border-box;
+}
+.chat-messages_list {
+    width: 280px;
     border-right: 1px solid #8d8c8c;
     box-sizing: border-box;
 }
@@ -42,6 +47,10 @@
 .chat-friendList, .chat-addFriend {
     display: none;
 }
+.addFriend-search {
+    padding: 15px 10px 5px 10px;
+    border-bottom: 2px solid #bdbdbd;
+}
 .friend_input {
     width: 180px;
     height: 18px;
@@ -53,9 +62,22 @@
     box-sizing: border-box;
 }
 .addFriend-result {
-    margin: 10px;
+    margin: 10px 0px 10px 0px;
+    padding: 0px 0px 0px 5px;
     color: red;
     font-weight: 500;
+    box-sizing: border-box;
+}
+.addFriend-title {
+    line-height: 40px;
+    text-align: center;
+    border-bottom: 2px solid #bdbdbd;
+}
+.addFriend-list {
+    line-height: 60px;
+    padding-left: 10px;
+    border-bottom: 1px solid #bdbdbd;
+    box-sizing: border-box;
 }
 
 /* chat-footer */

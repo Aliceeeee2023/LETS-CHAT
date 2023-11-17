@@ -20,12 +20,14 @@ const authRoutes = require('./routes/authRoutes.js');
 const signupRoutes = require('./routes/signupRoutes.js');
 const loginRoutes = require('./routes/loginRoutes.js');
 const addFriendsRoutes = require('./routes/addFriendsRoutes.js');
+const checkFriendsRoutes = require('./routes/checkFriendsRoutes.js');
 
 // 使用 routes（把 routes 放在 '/' 目錄中）
 app.use('/', authRoutes);
 app.use('/', signupRoutes);
 app.use('/', loginRoutes);
 app.use('/', addFriendsRoutes);
+app.use('/', checkFriendsRoutes);
 
 // 設置伺服器（不能用 app.listen 函數，不然會仍然使用 HTTP 進行交互）
 const { Server } = require('socket.io');

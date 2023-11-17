@@ -72,15 +72,35 @@ const FriendList = document.querySelector('.chat-friendList');
 const AddFriend = document.querySelector('.chat-addFriend');
 
 // 設置下方按鈕
+const iconMessagesList = document.querySelector('.icon_messagesList');
+const iconFriendList = document.querySelector('.icon_friendList');
 const iconAddFriend = document.querySelector('.icon_addFriend');
 
-iconAddFriend.addEventListener('click', () => {
+iconMessagesList.addEventListener('click', () => {
+    MessagesList.style.display = 'block';
+    AddFriend.style.display = 'none';    
+    FriendList.style.display = 'none';    
+});
+iconFriendList.addEventListener('click', () => {
+    FriendList.style.display = 'block'; 
     MessagesList.style.display = 'none';
-    AddFriend.style.display = 'block';    
+    AddFriend.style.display = 'none';
+});
+iconAddFriend.addEventListener('click', () => {
+    AddFriend.style.display = 'block';  
+    MessagesList.style.display = 'none';
+    FriendList.style.display = 'none';
+
+    // 清空搜尋好友提示
+    addFriendResult.textContent = '';
+    checkFriend(token);
 });
 
-// 添加好友邏輯（11/16）
+// 添加好友邏輯
 const AddFriendButton = document.querySelector('.addFriend-button');
+let addFriendResult = document.querySelector('.addFriend-result');
+let addFriendCheck = document.querySelector('.addFriend-check');
+
 
 AddFriendButton.addEventListener('click', () => {
     addFriend(token);
@@ -101,12 +121,44 @@ async function addFriend(token) {
         });
 
         const data = await response.json();
-        let addFriendResult = document.querySelector('.addFriend-result');
 
         if (response.status === 200) {
             addFriendResult.textContent = data.message;
         } else {
             addFriendResult.textContent = data.error;
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
+    };
+};
+
+// 確認好友申請邏輯
+async function checkFriend(token) {
+    try {
+        let response = await fetch('/api/friendStatus', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+        let data = await response.json();
+        let friendData = data.friendEmails;
+
+        // 每次進入都先清空帶確認好友名單
+        addFriendCheck.innerHTML = '';
+
+        if (response.status === 200) {
+            friendData.forEach(email => {
+                let friendList = document.createElement('div');
+                friendList.className = 'addFriend-list';
+                friendList.textContent = email;
+
+                addFriendCheck.appendChild(friendList);
+            });
+        } else {
+            console.error('錯誤：', data.error); // 無好友的情況不用特別顯示在頁面上
         };
     } catch (error) {
         console.error('錯誤：', error);
