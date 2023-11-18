@@ -57,6 +57,31 @@ router.post('/api/addFriend', authToken, async (req, res) => {
     };
 });
 
+// 變更好友申請狀態
+router.put('/api/addFriend', authToken, async (req, res) => {
+    let { email, status } = req.body;
+    console.log(email, status);
+
+    try {
+        let updateFriendStatus = 
+        `UPDATE friend_requests fr
+        JOIN users u ON fr.sender_id = u.id AND fr.receiver_id = ?
+        SET fr.status = ?
+        WHERE u.email = ?`;
+
+        if (status === 'O') {
+            const updateFriendResults = await db.query(updateFriendStatus, [req.id, '已確認', email]);
+            return res.status(200).json({ message: '好友申請已確認' });
+        } else if (status === 'X') {
+            const updateFriendResults = await db.query(updateFriendStatus, [req.id, '已拒絕', email]);
+            return res.status(200).json({ message: '好友申請已拒絕' });
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
+        return res.status(500).json({ error: '伺服器內部錯誤' });
+    }
+});
+
 // 驗證 token（並取出登入的 id）
 function authToken(req, res, next) {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1];

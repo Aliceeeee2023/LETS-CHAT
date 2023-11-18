@@ -85,6 +85,8 @@ iconFriendList.addEventListener('click', () => {
     FriendList.style.display = 'block'; 
     MessagesList.style.display = 'none';
     AddFriend.style.display = 'none';
+
+    showFriendList(token);
 });
 iconAddFriend.addEventListener('click', () => {
     AddFriend.style.display = 'block';  
@@ -96,11 +98,11 @@ iconAddFriend.addEventListener('click', () => {
     checkFriend(token);
 });
 
-// 添加好友邏輯
+// 送出好友申請
 const AddFriendButton = document.querySelector('.addFriend-button');
 let addFriendResult = document.querySelector('.addFriend-result');
 let addFriendCheck = document.querySelector('.addFriend-check');
-
+let friendListCheck = document.querySelector('.friendList-check');
 
 AddFriendButton.addEventListener('click', () => {
     addFriend(token);
@@ -132,7 +134,7 @@ async function addFriend(token) {
     };
 };
 
-// 確認好友申請邏輯
+// 顯示待確認好友申請
 async function checkFriend(token) {
     try {
         let response = await fetch('/api/friendStatus', {
@@ -146,19 +148,106 @@ async function checkFriend(token) {
         let data = await response.json();
         let friendData = data.friendEmails;
 
-        // 每次進入都先清空帶確認好友名單
+        // 每次進入都先清空待確認好友名單
         addFriendCheck.innerHTML = '';
 
         if (response.status === 200) {
             friendData.forEach(email => {
                 let friendList = document.createElement('div');
                 friendList.className = 'addFriend-list';
-                friendList.textContent = email;
-
+            
+                let friendEmail = document.createElement('div');
+                friendEmail.textContent = email;
+            
+                let friendAgree = document.createElement('div');
+                friendAgree.textContent = 'O';
+                friendAgree.className = 'addFriend-status';
+                friendAgree.addEventListener('click', () => {
+                    friendAnswerApi(email, 'O');
+                });
+            
+                let friendRefuse = document.createElement('div');
+                friendRefuse.textContent = 'X';
+                friendRefuse.className = 'addFriend-status';
+                friendRefuse.addEventListener('click', () => {
+                    friendAnswerApi(email, 'X');
+                });
+            
+                friendList.appendChild(friendEmail);
+                friendList.appendChild(friendAgree);
+                friendList.appendChild(friendRefuse);
                 addFriendCheck.appendChild(friendList);
             });
         } else {
             console.error('錯誤：', data.error); // 無好友的情況不用特別顯示在頁面上
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
+    };
+};
+
+// 處理好友申請（接受或拒絕）
+async function friendAnswerApi(email, status) {
+    try {
+        let response = await fetch('/api/addFriend', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ email, status }),
+        });
+
+        let data = await response.json();
+        console.log(data);
+
+        if (response.status === 200) {
+            // 將對應的好友申請從頁面上清除
+            let friendListItems = document.querySelectorAll('.addFriend-list div');
+
+            friendListItems.forEach(item => {
+                if (item.textContent.includes(email)) {
+                    item.parentNode.remove();
+                };
+            });
+        } else {
+            console.error(data.error);
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
+    };
+};
+
+// 顯示好友列表
+async function showFriendList(token) {
+    try {
+        let response = await fetch('/api/showFriendList', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+        let data = await response.json();
+        let friendData = data.friendEmails;
+
+        // 每次進入都先清空好友名單
+        friendListCheck.innerHTML = '';
+
+        if (response.status === 200) {
+            friendData.forEach(email => {
+                let friendList = document.createElement('div');
+                friendList.className = 'addFriend-list';
+            
+                let friendEmail = document.createElement('div');
+                friendEmail.textContent = email;
+            
+                friendList.appendChild(friendEmail);
+                friendListCheck.appendChild(friendList);
+            });
+        } else {
+            console.error('錯誤：', data.error);
         };
     } catch (error) {
         console.error('錯誤：', error);

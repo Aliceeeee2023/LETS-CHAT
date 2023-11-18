@@ -74,10 +74,20 @@
     border-bottom: 2px solid #bdbdbd;
 }
 .addFriend-list {
+    display: flex;
+    align-items: center;
     line-height: 60px;
     padding-left: 10px;
     border-bottom: 1px solid #bdbdbd;
     box-sizing: border-box;
+}
+.addFriend-status {
+    width: 30px;
+    line-height: 30px;
+    text-align: center;
+    margin-left:15px;
+    border: 1px solid #bdbdbd;
+    cursor: pointer;
 }
 
 /* chat-footer */
