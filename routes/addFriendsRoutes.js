@@ -27,9 +27,9 @@ router.post('/api/addFriend', authToken, async (req, res) => {
         const findFriendQuery = 
         `SELECT u.id AS friendId, fr.status AS friendRequestStatus
         FROM users u
-        LEFT JOIN friend_requests fr ON fr.receiver_id = u.id AND fr.sender_id = ?
-        WHERE u.email = ? `;
-        const checkFriendResults = await db.query(findFriendQuery, [req.id, friendEmail]);
+        LEFT JOIN friend_requests fr ON (fr.receiver_id = u.id AND fr.sender_id = ?) OR (fr.sender_id = u.id AND fr.receiver_id = ?)
+        WHERE u.email = ?;`;
+        const checkFriendResults = await db.query(findFriendQuery, [req.id, req.id, friendEmail]);
 
         if (checkFriendResults[0].length === 0) {
             return res.status(400).json({ error: '查詢不到此帳號' });
@@ -60,7 +60,6 @@ router.post('/api/addFriend', authToken, async (req, res) => {
 // 變更好友申請狀態
 router.put('/api/addFriend', authToken, async (req, res) => {
     let { email, status } = req.body;
-    console.log(email, status);
 
     try {
         let updateFriendStatus = 

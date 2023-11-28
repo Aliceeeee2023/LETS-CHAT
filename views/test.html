@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>聊天系統</title>
+</head>
+<body>
+  <div>
+    <h2>個體 A</h2>
+    <div id="personAChat"></div>
+    <input type="text" id="personAMessage" placeholder="輸入您的訊息">
+    <button onclick="sendMessage('A')">發送</button>
+  </div>
+
+  <div>
+    <h2>個體 B</h2>
+    <div id="personBChat"></div>
+    <input type="text" id="personBMessage" placeholder="輸入您的訊息">
+    <button onclick="sendMessage('B')">發送</button>
+  </div>
+
+  <div>
+    <h2>個體 C</h2>
+    <div id="personCChat"></div>
+    <input type="text" id="personCMessage" placeholder="輸入您的訊息">
+    <button onclick="sendMessage('C')">發送</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+  <script src="frontend.js"></script>
+  <script>
+    const socket = io();
+
+    function sendMessage(person) {
+        const messageInput = document.getElementById(`person${person}Message`);
+        const message = messageInput.value;
+        socket.emit('chat message', { person, message });
+        messageInput.value = '';
+    }
+
+    function appendMessage(person, message) {
+        const chatDiv = document.getElementById(`person${person}Chat`);
+        const newMessage = document.createElement('p');
+        newMessage.textContent = message;
+        chatDiv.appendChild(newMessage);
+    }
+
+    socket.on('chat message', (data) => {
+        appendMessage(data.person, data.message);
+    });
+  </script>
+</body>
+</html>

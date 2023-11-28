@@ -4,6 +4,7 @@
     height: 500px;
     margin: 0 auto;
     margin-top: 120px;
+    margin-bottom: 240px;
     border-top: 1px solid #8d8c8c;
     border-left: 1px solid #8d8c8c;
     border-right: 1px solid #8d8c8c;
@@ -44,7 +45,7 @@
 .chat-message {
     height: 400px;
 }
-.chat-friendList, .chat-addFriend {
+.chat-messagesList, .chat-addFriend {
     display: none;
 }
 .addFriend-search {
@@ -73,13 +74,27 @@
     text-align: center;
     border-bottom: 2px solid #bdbdbd;
 }
-.addFriend-list {
+.showFriendList {
+    cursor: pointer;
+}
+.showFriendList:hover, .showMessageList:hover, .addFriend-status:hover {
+    background-color: #f0f0f0;
+}
+.showFriendList, .addFriend-list {
     display: flex;
     align-items: center;
     line-height: 60px;
     padding-left: 10px;
     border-bottom: 1px solid #bdbdbd;
     box-sizing: border-box;
+}
+.showMessageList {
+    align-items: center;
+    height: 70px;
+    padding: 10px;
+    border-bottom: 1px solid #bdbdbd;
+    box-sizing: border-box;
+    cursor: pointer;
 }
 .addFriend-status {
     width: 30px;
@@ -88,6 +103,11 @@
     margin-left:15px;
     border: 1px solid #bdbdbd;
     cursor: pointer;
+}
+/* 超過高度則出現卷軸 */
+.messagesList-check ,.friendList-check, .ul {
+    max-height: 350px; /* 你希望的最大高度 */
+    overflow-y: auto;
 }
 
 /* chat-footer */
@@ -106,8 +126,13 @@
     border: 1px solid #8d8c8c;
     cursor: pointer;
 }
+.chat-input_container {
+    flex: 1;
+    display: flex;
+}
 .chat-input {
     width: 100%;
+    max-height: 100%;
     border: none;
     box-sizing: border-box;
     font-family: "Noto Sans TC";

@@ -18,42 +18,48 @@
             </div>
         </header>
 
-        <main class="chat-window">
-            <div class="chat-header">
-                <div class="chat-header_user">User Name</div>
-                <div class="chat-header_partner">Partner Name</div>
-            </div>
-        
-            <div class="chat-message">
-                <div class="chat-messages_list">
-                    <div class="chat-messagesList"></div> <!-- 列表用 JS 自動生成 -->
-                    <div class="chat-friendList"> <!-- 列表用 JS 自動生成 -->
-                        <div class="friendList-check"></div>
-                    </div>
-                    <div class="chat-addFriend">
-                        <div class="addFriend-search">
-                            <span class="chat-addFriend_input"><input type="text" class="friend_input" placeholder="Search friends"></span>
-                            <span><button class="addFriend-button">Search</button></span>
-                            <div class="addFriend-result"></div>
+        <main class="main">
+            <main class="chat-window">
+                <div class="chat-header">
+                    <div class="chat-header_user"></div>
+                    <div class="chat-header_partner"></div>
+                </div>
+            
+                <div class="chat-message">
+                    <div class="chat-messages_list">
+                        <div class="chat-messagesList">
+                            <div class="messagesList-check"></div>
+                        </div> <!-- 列表用 JS 自動生成 -->
+                        <div class="chat-friendList"> <!-- 列表用 JS 自動生成 -->
+                            <div class="friendList-check"></div>
                         </div>
-                        <div class="addFriend-title">待確認好友名單</div>
-                        <div class="addFriend-check"></div>
+                        <div class="chat-addFriend">
+                            <div class="addFriend-search">
+                                <span class="chat-addFriend_input"><input type="text" class="friend_input" placeholder="Search friends"></span>
+                                <span><button class="addFriend-button">Search</button></span>
+                                <div class="addFriend-result"></div>
+                            </div>
+                            <div class="addFriend-title">待確認好友名單</div>
+                            <div class="addFriend-check"></div>
+                        </div>
+                    </div>                
+                    <div class="chat-messages_content">
+                        <div class="ul"></div>
                     </div>
-                </div>                
-                <div class="chat-messages_content">
-                    <ul class="ul"></ul>
                 </div>
-            </div>
-        
-            <div class="chat-footer">
-                <div class="chat-footer_bar">
-                    <div class="icon_messagesList">聊天列表</div>
-                    <div class="icon_friendList">好友列表</div>
-                    <div class="icon_addFriend">加好友</div>
+            
+                <div class="chat-footer">
+                    <div class="chat-footer_bar">
+                        <div class="icon_friendList">好友列表</div>
+                        <div class="icon_messagesList">訊息列表</div>
+                        <div class="icon_addFriend">加好友</div>
+                    </div>
+                    <div class="chat-input_container">
+                        <!-- <div class="chat-footer_input"><input type="text" class="chat-input" placeholder="Type your message"></div>
+                        <button class="chat-button">Send</button> -->
+                    </div>
                 </div>
-                <div class="chat-footer_input"><input type="text" class="chat-input" placeholder="Type your message"></div>
-                <button class="chat-button">Send</button>
-            </div>
+            </main>
         </main>
 
         <footer class="footer">

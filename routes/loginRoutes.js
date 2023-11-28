@@ -57,14 +57,14 @@ router.put('/api/login', limiter, async (req, res) => {
 // 而中間件將在 API 執行前進行，也就是 API 會拿到 authToken 處理好的結果
 router.get('/api/login', authToken, async (req, res) => {
     try {
-        const checkLoginData = 'SELECT email FROM users WHERE email = ?';
+        const checkLoginData = 'SELECT id, email FROM users WHERE email = ?';
         const LoginResults = await db.query(checkLoginData, [req.email]);
 
         if (LoginResults[0].length === 0) {
             return res.status(400).json({ error: '未登入帳號' });
         }
 
-        return res.status(200).json({ "ok": true });
+        return res.status(200).json({ "email": req.email, "userId": req.id});
     } catch (error) {
         console.error('錯誤：', error);
         return res.status(500).json({ error: '伺服器內部錯誤' });
@@ -86,6 +86,7 @@ function authToken(req, res, next) {
 
         // 將解碼後的 email 儲存在 req 中，供後續使用
         // 接著呼叫 next() 繼續後續作業  
+        req.id = decoded.id;
         req.email = decoded.email;
         next();
     });
