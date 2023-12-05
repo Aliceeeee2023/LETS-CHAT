@@ -20,7 +20,7 @@
     border-right: 1px solid #a7a3a3;
     border-bottom: 1px solid #a7a3a3;
 }
-.login-email, .login-password, .signup-email, .signup-password {
+.login-email, .login-password, .signup-email, .signup-name, .signup-password {
     width: 348px;
     height: 60px;
     padding: 14px;

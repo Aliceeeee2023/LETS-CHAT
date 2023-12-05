@@ -12,20 +12,57 @@
     overflow: hidden;
 }
 
+
+
+.icon_friendList, .icon_messagesList, .icon_addFriend, .icon_setting, .upload-button {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.icon_friendList {
+    background-image: url('../images/03.JPG');
+}
+.icon_messagesList {
+    background-image: url('../images/01.JPG');
+}
+.icon_addFriend {
+    background-image: url('../images/02.JPG');
+}
+.icon_setting {
+    background-image: url('../images/04.JPG');
+}
+.upload-button {
+    border-right: 1px solid #8d8c8c;
+    background-image: url('../images/05.JPG');
+    width: 50px;
+    height: 50px;
+}
+
+
+
+
 /* 共用 CSS */
 .chat-header, .chat-message, .chat-footer {
     display: flex;
     border-bottom: 1px solid #8d8c8c;
     box-sizing: border-box;
 }
-.chat-header_user, .chat-footer_bar {
-    width: 280px;
+.chat-footer_bar {
+    display: flex;
+    width: 260px;
+    /* padding: 0px 10px 0px 10px; */
+    border-right: 1px solid #8d8c8c;
+    box-sizing: border-box;
+}
+.chat-header_user {
+    display: flex;
+    width: 260px;
     padding: 10px;
     border-right: 1px solid #8d8c8c;
     box-sizing: border-box;
 }
 .chat-messages_list {
-    width: 280px;
+    width: 260px;
     border-right: 1px solid #8d8c8c;
     box-sizing: border-box;
 }
@@ -117,13 +154,13 @@
 .chat-footer_bar {
     display: flex;
 }
-.icon_messagesList, .icon_friendList, .icon_addFriend {
+.icon_messagesList, .icon_friendList, .icon_addFriend, .icon_setting {
     flex: 1;
-    margin: 0px 5px 0px 5px;
-    padding: 0px 5px 0px 5px;
+    /* margin: 0px 5px 0px 5px;
+    padding: 0px 5px 0px 5px; */
     text-align: center;
     color: #575454;
-    border: 1px solid #8d8c8c;
+    /* border: 1px solid #8d8c8c; */
     cursor: pointer;
 }
 .chat-input_container {
@@ -136,4 +173,114 @@
     border: none;
     box-sizing: border-box;
     font-family: "Noto Sans TC";
+}
+
+
+
+/* 測試中 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+}
+
+.modal-content {
+    text-align: center;
+}
+
+/* Add a background overlay */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+
+
+/* 會員設定頁面 */
+.chat-messages_setting {
+    display:none;
+}
+.setting {
+    display: flex;
+    margin: 20px;
+}
+.data-setting_name, .data-setting_email {
+    display: flex;
+}
+.setting-pic {
+    /* border-radius: 50%; 將元素設置為圓形 */
+    /* background-image: url('../images/test.jpg');
+    width: 150px;
+    height: 150px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 1px solid #bdbdbd; */
+
+    position: relative; /* 將 setting-pic 設置為相對定位的容器 */
+    border-radius: 50%;
+    background-image: url('../images/test.jpg');
+    width: 150px;
+    height: 150px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 1px solid #bdbdbd;
+}
+.change-setting-pic {
+/* 
+    text-align: center; /* 使文字水平置中 */
+    /* line-height: 50px; /* 設置行高使文字垂直置中，請根據你的需要調整這個值 */
+    /* 其他樣式，如果需要的話 */
+    background-image: url('../images/05.jpg');
+    border-radius: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width:20px;
+    height: 20px;
+    position: absolute; /* 將 change-setting-pic 設置為絕對定位的元素 */
+    bottom: 0; /* 將元素定位在底部 */
+    right: 0; /* 將元素定位在右側 */
+    background-color: rgba(255, 255, 255, 0.8); /* 背景色，這樣文字可以更清晰地顯示在圖片上 */
+    padding: 5px; /* 添加一些內邊距，讓文字更易讀 */
+    cursor: pointer;
+    border: 1px solid #ccc; /* 可以根據需要添加樣式 */
+}
+.data-setting {
+    flex: 1;
+    padding: 20px 30px 0px 30px;
+}
+.data-setting_email {
+    margin-top: 10px;
+}
+.name-content, .email-content {
+    margin-left: 20px;
+}
+.data-name_change ,.data-email_change {
+    margin-left: 15px;
+}
+.addFriend-button {
+    border: 1px solid #ccc; /* 可以根據需要添加樣式 */
+    padding: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.data-name_change ,.data-email_change {
+    border: 1px solid #ccc; /* 可以根據需要添加樣式 */
+    display: inline-block;
+    cursor: pointer;
 }

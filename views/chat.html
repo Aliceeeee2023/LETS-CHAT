@@ -22,7 +22,9 @@
             <main class="chat-window">
                 <div class="chat-header">
                     <div class="chat-header_user"></div>
-                    <div class="chat-header_partner"></div>
+                        <div class="chat-header_partner"></div>
+                        <button id="callButton" style="display: none;">Call Friend</button>
+                    </div>
                 </div>
             
                 <div class="chat-message">
@@ -44,15 +46,55 @@
                         </div>
                     </div>                
                     <div class="chat-messages_content">
+                        <div class="chat-messages_setting">
+                            <div class="setting">
+                                <div>
+                                    <!-- <div class="setting-pic"></div>
+                                    <div class="change-setting-pic">修改</div> -->
+                                    <div class="setting-pic" id="profilePic">
+                                        <div class="change-setting-pic" id="changeProfilePic"></div>
+                                    </div>
+                                    <input type="file" id="fileInput" style="display: none;">
+                                </div>
+                                <div class="data-setting">
+                                    <div class="data-setting_name">
+                                        <div class="data-name">暱稱</div>
+                                        <div class="name-content" contenteditable="false">尚未設定</div>
+                                        <div class="data-name_change">修改</div>
+                                    </div>
+                                    <div class="data-setting_email">
+                                        <div class="data-email">Email</div>
+                                        <!-- <div class="email-content"></div>
+                                        <div class="data-email_change"  id="changeSettingPic" contenteditable="true">修改</div>                                    -->
+                                        <div class="email-content" contenteditable="false">example@email.com</div>
+                                        <div class="data-email_change" id="changeSettingPic">修改</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div class="ul"></div>
                     </div>
                 </div>
             
                 <div class="chat-footer">
                     <div class="chat-footer_bar">
-                        <div class="icon_friendList">好友列表</div>
+                        <!-- <div class="icon_friendList">好友列表</div>
                         <div class="icon_messagesList">訊息列表</div>
-                        <div class="icon_addFriend">加好友</div>
+                        <div class="icon_addFriend">加好友</div> -->
+                        <div class="icon_friendList"></div>
+                        <div class="icon_messagesList"></div>
+                        <div class="icon_addFriend"></div>
+                        <div class="icon_setting"></div>
+                        <!-- HTML 中的通話按鈕和結束按鈕 -->
+                        <!-- <button id="startCallButton">開始</button>
+                        <button id="endCallButton" style="display: none;">結束</button> -->
+                        <!-- <video id="localVideo" autoplay playsinline></video>
+                        <video id="remoteVideo" autoplay playsinline></video> -->
+                        <!-- <button id="startButton">Start Call</button> -->
+                        <!-- <button id="hangupButton">Hang Up</button> -->
                     </div>
                     <div class="chat-input_container">
                         <!-- <div class="chat-footer_input"><input type="text" class="chat-input" placeholder="Type your message"></div>
@@ -62,12 +104,55 @@
             </main>
         </main>
 
+        <!-- 实现通话中弹出小窗口的功能 -->
+        <!-- <div id="callModal" class="modal">
+            <div class="modal-content">
+                <video id="localVideo" autoplay playsinline></video>
+                <video id="remoteVideo" autoplay playsinline></video>
+                <button id="hangupButton">Hang Up</button>
+            </div>
+        </div> -->
+
+        <!-- Modal for Call Request -->
+        <div id="callRequestModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <p>Calling...</p>
+                <button id="cancelCallButton">Cancel Call</button>
+            </div>
+        </div>
+
+        <!-- Modal for Call Response -->
+        <div id="callResponseModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <p class="comingCallName">Incoming Call</p>
+                <button id="acceptCallButton">Accept</button>
+                <button id="rejectCallButton">Reject</button>
+            </div>
+        </div>
+
+        <!-- Modal for Call in Progress -->
+        <div id="callInProgressModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <p>Call in Progress</p>
+                <button id="hangupButton">Hang Up</button>
+            </div>
+        </div>
+
+        <!-- Audio elements to display local and remote audio -->
+        <audio id="localAudio" autoplay></audio>
+        <audio id="remoteAudio" autoplay></audio>
+
+        <!-- 在 HTML 中添加一個用於顯示音頻的元素 -->
+        <!-- <audio id="friendAudio" autoplay></audio> -->
+
         <footer class="footer">
             <div class="footer-container">COPYRIGHT © 2023 LET'S CHAT</div>
         </footer>
 
         <!-- 引用 socket.io 的客戶端套件 -->
         <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+        <!-- 引用 Peer.js 的客戶端套件，要自己找最新版本 -->
+        <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.1/dist/peerjs.min.js"></script>       
         <script src="script/base.js"></script>
         <script src="script/chat.js"></script>
     </body>

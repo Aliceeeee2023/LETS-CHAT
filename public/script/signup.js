@@ -17,6 +17,12 @@ function checkEmail(email) {
     return emailRegex.test(email);
 };
 
+// 驗證暱稱只能是中英文
+function checkNickname(name) {
+    const nicknameRegex = /^[\u4e00-\u9fa5a-zA-Z]+$/;
+    return nicknameRegex.test(name);
+}
+
 function checkPassword(password) {
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
     return passwordRegex.test(password);
@@ -30,29 +36,34 @@ document.addEventListener('DOMContentLoaded', () => {
 // 將資料送至後端處理
 async function submitSignupForm() {
     let emailInput = document.querySelector('.signup-email');
+    let nameInput = document.querySelector('.signup-name');    
     let passwordInput = document.querySelector('.signup-password');
     let email = emailInput.value;
+    let name = nameInput.value;
     let password = passwordInput.value;
 
     signupError.style.display = 'block';
 
     // 檢查資料後無誤送到後端
-    if (!email || !password) {
+    if (!email || !password || !name) {
         signupError.textContent = '註冊資料不可為空';
     } else if (!checkEmail(email)) {
         signupError.textContent = '無效的電子郵件格式';
+    } else if (!checkNickname(name)) {
+        signupError.textContent = '無效的暱稱格式';
     } else if (!checkPassword(password)) {
         signupError.textContent = '無效的密碼格式';
     } else {
         // 將表單資料清空
         emailInput.value = '';
+        nameInput.value = '';
         passwordInput.value = '';
         
         try {
             const response = await fetch('/api/signup', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json',},
-                body: JSON.stringify({ email, password }), // 名稱作為屬性名，值作為相應屬性的值
+                body: JSON.stringify({ email, name, password }), // 名稱作為屬性名，值作為相應屬性的值
             });
     
             const data = await response.json();           
