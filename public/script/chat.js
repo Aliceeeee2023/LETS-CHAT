@@ -213,11 +213,13 @@ iconMessagesList.addEventListener('click', () => {
     FriendList.style.display = 'none';   
     chatMessagesSetting.style.display = 'none';
     chatIndex.style.display = 'flex';
+    chatHeaderSetting.innerHTML = '';
     ul.innerHTML = ''
 
     getMessageList(token);
 });
 iconFriendList.addEventListener('click', () => {
+    chatHeaderSetting.innerHTML = '';
     FriendList.style.display = 'block'; 
     MessagesList.style.display = 'none';
     AddFriend.style.display = 'none';
@@ -228,6 +230,7 @@ iconFriendList.addEventListener('click', () => {
     showFriendList(token);
 });
 iconAddFriend.addEventListener('click', () => {
+    chatHeaderSetting.innerHTML = '';
     AddFriend.style.display = 'block';  
     MessagesList.style.display = 'none';
     chatIndex.style.display = 'flex';
@@ -246,18 +249,13 @@ const chatMessagesSetting  = document.querySelector('.chat-messages_setting ');
 
 iconSetting.addEventListener('click', () => {
     chatIndex.style.display = 'none';
-    chatHeaderPartner.innerHTML = '';
     callButton.style.display = 'none';
-    AddFriend.style.display = 'none';  
-    MessagesList.style.display = 'none';
-    FriendList.style.display = 'none';
     chatMessagesSetting.style.display = 'block';
-    chatHeaderPartner.textContent = '會員資料設定';
+    chatHeaderSetting.textContent = '會員資料設定';
     ul.innerHTML = '';
     chatInputContainer.innerHTML = '';
-    FriendList.style.display = 'block'; 
-    MessagesList.style.display = 'none';
-    AddFriend.style.display = 'none';
+    chatPartnerName.innerHTML = '';
+    chatPartnerIcon.style.display = 'none';
 
     nameContent.textContent = myName;
     settingPic.style.backgroundImage = `url(${myIcon})`;
@@ -273,11 +271,11 @@ iconSetting.addEventListener('click', () => {
 const dataEmailChange = document.querySelector('.data-email_change');
 
 dataEmailChange.addEventListener('click', function () {
-    if (this.textContent === '修改') {
+    if (this.textContent === ' ') {
         // 切換到編輯模式
         emailContent.contentEditable = true;
         emailContent.focus();
-        this.textContent = '完成';
+        this.textContent = '  ';
     } else {
         // 完成編輯，將資料傳送到資料庫
         const newEmail = emailContent.textContent.trim();
@@ -286,7 +284,7 @@ dataEmailChange.addEventListener('click', function () {
 
         // 切換回非編輯模式
         emailContent.contentEditable = false;
-        this.textContent = '修改';
+        this.textContent = ' ';
     }
 });
 
@@ -307,7 +305,7 @@ dataNameChange.addEventListener('click', function () {
 
         // 切換回非編輯模式
         nameContent.contentEditable = false;
-        this.textContent = '';
+        this.textContent = ' ';
     }
 });
 
@@ -582,11 +580,13 @@ async function showFriendList(token) {
 let currentRoomId = null;
 
 // 點擊好友後渲染到聊天頁面（處理中）
-const chatHeaderPartner = document.querySelector('.chat-header_partner');
+const chatHeaderSetting = document.querySelector('.chat-header_setting');
 const chatPartnerIcon = document.querySelector('.chat-partner_icon');
 const chatPartnerName = document.querySelector('.chat-partner_name');
 
 function showTalkPage(name, icon, roomId, friendId) {
+    chatHeaderSetting.innerHTML = '';
+    chatPartnerIcon.style.display = 'block';
     chatMessagesSetting.style.display = 'none';
     chatPartnerIcon.style.backgroundImage = `url(${icon})`;
     chatPartnerName.textContent = name;
