@@ -25,7 +25,7 @@ router.put('/api/login', limiter, async (req, res) => {
 
     // 將資料放入資料庫判斷及處理
     try {
-        const checkLoginData = 'SELECT id, name, email, password FROM users WHERE email = ?';
+        const checkLoginData = 'SELECT id, email, password FROM users WHERE email = ?';
         const LoginResults = await db.query(checkLoginData, [email]);
         console.log(LoginResults);
 
@@ -37,12 +37,11 @@ router.put('/api/login', limiter, async (req, res) => {
         // 使用 console.log(Object.keys(LoginResults[0])) 確認屬性名稱為['0']
         let dbId = LoginResults[0]['0'].id;
         let dbEmail = LoginResults[0]['0'].email;
-        let dbName = LoginResults[0]['0'].name;
         let dbPassword = LoginResults[0]['0'].password;
 
         if (email === dbEmail && password === dbPassword) {
             // 登入成功後設置 token 並回傳
-            const token = jwt.sign({ id: dbId, name: dbName, email: dbEmail }, jwtSecretKey, { expiresIn: '1d' });
+            const token = jwt.sign({ id: dbId, email: dbEmail }, jwtSecretKey, { expiresIn: '1d' });
 
             return res.status(200).json({ "token": token });
         } else if (email === dbEmail && password !== dbPassword) {
@@ -59,14 +58,19 @@ router.put('/api/login', limiter, async (req, res) => {
 // 而中間件將在 API 執行前進行，也就是 API 會拿到 authToken 處理好的結果
 router.get('/api/login', authToken, async (req, res) => {
     try {
-        const checkLoginData = 'SELECT id, name, email FROM users WHERE email = ?';
+        const checkLoginData = 'SELECT id, name, email, icon FROM users WHERE email = ?';
         const LoginResults = await db.query(checkLoginData, [req.email]);
 
         if (LoginResults[0].length === 0) {
             return res.status(400).json({ error: '未登入帳號' });
         }
 
-        return res.status(200).json({ "email": req.email, "name": req.name, "userId": req.id});
+        let dbId = LoginResults[0]['0'].id;
+        let dbName = LoginResults[0]['0'].name;
+        let dbEmail = LoginResults[0]['0'].email;
+        let dbIcon = LoginResults[0]['0'].icon;
+
+        return res.status(200).json({ "email": dbEmail, "name": dbName, "userId": dbId, "icon": dbIcon});
     } catch (error) {
         console.error('錯誤：', error);
         return res.status(500).json({ error: '伺服器內部錯誤' });
@@ -89,7 +93,6 @@ function authToken(req, res, next) {
         // 將解碼後的 email 儲存在 req 中，供後續使用
         // 接著呼叫 next() 繼續後續作業  
         req.id = decoded.id;
-        req.name = decoded.name;
         req.email = decoded.email;
         next();
     });

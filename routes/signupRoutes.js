@@ -47,13 +47,14 @@ router.post('/api/signup', limiter, async (req, res) => {
     try {
         const checkEmailExist = 'SELECT * FROM users WHERE email = ?';
         const emailExistResults = await db.query(checkEmailExist, [email]);
+        const defaultIcon = 'https://d5ygihl98da69.cloudfront.net/uploads/screenshot_20231207_025708.png'
 
         // 取出資料中的[0]才是實際資料
         if (emailExistResults[0].length > 0) {
             return res.status(400).json({ error: '電子郵件地址已存在' });
         } else {
-            const insertUser = 'INSERT INTO users (email, name, password) VALUES (?, ?, ?)';
-            await db.query(insertUser, [email, name, password]);
+            const insertUser = 'INSERT INTO users (email, name, password, icon) VALUES (?, ?, ?, ?)';
+            await db.query(insertUser, [email, name, password, defaultIcon]);
 
             return res.status(200).json({ ok: true });
         };

@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
 
     // 先從前端取得ID
     socket.on('set-current-user', (data) => {
-        console.log(data);
+        // console.log(data);
         const { currentUserId } = data;
 
         // 將 currentUserId 與 socket.id 進行映射
@@ -81,16 +81,37 @@ io.on('connection', (socket) => {
         console.log(`用戶 ${socket.id} 在房間 ${room} 發送消息：${message}`);
         
 		try {
+            // 獲取當前時間
+            const currentTime = new Date();
+
             // 将消息存储到 MySQL 数据库
             await saveMessageToDatabase(room, currentUserId, currentFriendId , message);
 
             // 將接收到的消息發送給同房間的所有人
-            io.to(room).emit('chat message', { room, message, currentUserId});
+            io.to(room).emit('chat message', { room, message, currentUserId, time: currentTime});
         } catch (error) {
             console.error('錯誤：', error);
 
             // 数据库插入失败，向客户端发送失败消息
             socket.emit('chat message', { room, message: '訊息傳送失敗' });
+        }
+    });
+
+    socket.on('chat image', async (data) => {
+        const { room, currentUserId, currentFriendId, fileURL } = data;
+        console.log(`用戶 ${socket.id} 在房間 ${room} 發送消息：${fileURL}`);
+        
+		try {
+            // 獲取當前時間
+            const currentTime = new Date();
+
+            // 將接收到的消息發送給同房間的所有人
+            io.to(room).emit('chat image', { room, fileURL, currentUserId, time: currentTime});
+        } catch (error) {
+            console.error('錯誤：', error);
+
+            // 数据库插入失败，向客户端发送失败消息
+            socket.emit('chat image', { room, message: '訊息傳送失敗' });
         }
     });
 
@@ -324,8 +345,22 @@ io.on('connection', (socket) => {
 // });
 
 
+// S3相關（確認中）
+// 上傳檔案到 S3 的相關設置
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
+const s3BucketName = process.env.AWS_S3_BUCKET_NAME;
 
+// 檔案上傳相關設定
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
+// 設置 AWS SDK
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+});
 
 // 將訊息存到資料庫
 async function saveMessageToDatabase(room, currentUserId, currentFriendId, message) {

@@ -21,31 +21,58 @@
         <main class="main">
             <main class="chat-window">
                 <div class="chat-header">
-                    <div class="chat-header_user"></div>
-                        <div class="chat-header_partner"></div>
-                        <button id="callButton" style="display: none;">Call Friend</button>
+                    <div class="chat-header_user">
+                        <div class="chat-header_icon"></div>
+                        <div class="chat-header_name"></div>
                     </div>
+                    <div class="chat-header_partner">
+                        <div class="chat-partner_icon"></div>
+                        <div class="chat-partner_name"></div>                        
+                    </div>
+                    <div class="callButton"></div>
                 </div>
             
                 <div class="chat-message">
                     <div class="chat-messages_list">
                         <div class="chat-messagesList">
-                            <div class="messagesList-check"></div>
+                            <div class="messagesList-check">
+                                <!-- <div class="showMessageList">
+                                    <div class="showFriendIcon">圖片</div>
+                                    <div class="showData">
+                                        <div class="showData_container">
+                                            <div class="showFriendName">暱稱</div>
+                                            <div class="showFriendTime">時間</div>
+                                        </div>
+                                        <div class="showFriendMessage">個人訊息</div>
+                                    </div>
+                                </div> -->
+                            </div>
                         </div> <!-- 列表用 JS 自動生成 -->
                         <div class="chat-friendList"> <!-- 列表用 JS 自動生成 -->
                             <div class="friendList-check"></div>
                         </div>
                         <div class="chat-addFriend">
-                            <div class="addFriend-search">
-                                <span class="chat-addFriend_input"><input type="text" class="friend_input" placeholder="Search friends"></span>
-                                <span><button class="addFriend-button">Search</button></span>
+                            <div>
+                                <div class="addFriend-search">
+                                    <span class="chat-addFriend_input"><input type="text" class="friend_input" placeholder="輸入Email搜尋好友"></span>
+                                    <!-- <span><button class="addFriend-button">Search</button></span> -->
+                                    <span><div class="addFriend-button"></div></span>
+                                </div>
                                 <div class="addFriend-result"></div>
                             </div>
-                            <div class="addFriend-title">待確認好友名單</div>
+                            <div class="addFriend-title">待確認好友邀請</div>
                             <div class="addFriend-check"></div>
                         </div>
                     </div>                
                     <div class="chat-messages_content">
+                        <!-- <div class="chat-index">
+                            <div class="chat-index_pic"></div>
+                            <div class="chat-index_word">開始聊天吧！</div>
+                        </div> -->
+                        <div class="chat-index">
+                            <div class="chat-index_pic"></div>
+                            <div class="chat-index_word">開始聊天吧！</div>
+                        </div>
                         <div class="chat-messages_setting">
                             <div class="setting">
                                 <div>
@@ -54,20 +81,21 @@
                                     <div class="setting-pic" id="profilePic">
                                         <div class="change-setting-pic" id="changeProfilePic"></div>
                                     </div>
+                                    <!-- 一次只能選擇一個檔案，默認設定為  multiple="false" -->
                                     <input type="file" id="fileInput" style="display: none;">
                                 </div>
                                 <div class="data-setting">
                                     <div class="data-setting_name">
                                         <div class="data-name">暱稱</div>
                                         <div class="name-content" contenteditable="false">尚未設定</div>
-                                        <div class="data-name_change">修改</div>
+                                        <div class="data-name_change"></div>
                                     </div>
                                     <div class="data-setting_email">
                                         <div class="data-email">Email</div>
                                         <!-- <div class="email-content"></div>
                                         <div class="data-email_change"  id="changeSettingPic" contenteditable="true">修改</div>                                    -->
                                         <div class="email-content" contenteditable="false">example@email.com</div>
-                                        <div class="data-email_change" id="changeSettingPic">修改</div>
+                                        <div class="data-email_change" id="changeSettingPic"> </div>
 
                                     </div>
                                 </div>

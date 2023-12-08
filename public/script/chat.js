@@ -141,9 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let myName;
 let myEmail;
-
+let myIcon;
 
 const chatHeaderUser = document.querySelector('.chat-header_user');
+const chatHeaderIcon = document.querySelector('.chat-header_icon');
+const chatHeaderName = document.querySelector('.chat-header_name');
 
 async function checkUsers(token) {
     try {
@@ -160,10 +162,17 @@ async function checkUsers(token) {
         if (response.status === 200) {
             currentUserId = data.userId;
             myName = data.name;
-
+            myIcon = data.icon;
             myEmail = data.email;
             console.log(currentUserId);
-            chatHeaderUser.textContent = myName;
+            chatHeaderName.textContent = myName;
+
+            // 生出ICON
+            //                 let friendIcon = document.createElement('div');
+            //     friendIcon.className = 'showFriendIcon';
+            //     friendIcon.style.backgroundImage = `url(${icon})`;
+            
+            chatHeaderIcon.style.backgroundImage = `url(${myIcon})`;
             document.body.style.display = 'block';     
         } else if (response.status === 400) {
             window.location.href = '/';
@@ -195,12 +204,16 @@ const iconMessagesList = document.querySelector('.icon_messagesList');
 const iconFriendList = document.querySelector('.icon_friendList');
 const iconAddFriend = document.querySelector('.icon_addFriend');
 const iconSetting = document.querySelector('.icon_setting');
+const chatIndex = document.querySelector('.chat-index');
+
 
 iconMessagesList.addEventListener('click', () => {
     MessagesList.style.display = 'block';
     AddFriend.style.display = 'none';    
-    FriendList.style.display = 'none';    
+    FriendList.style.display = 'none';   
     chatMessagesSetting.style.display = 'none';
+    chatIndex.style.display = 'flex';
+    ul.innerHTML = ''
 
     getMessageList(token);
 });
@@ -209,14 +222,19 @@ iconFriendList.addEventListener('click', () => {
     MessagesList.style.display = 'none';
     AddFriend.style.display = 'none';
     chatMessagesSetting.style.display = 'none';
+    chatIndex.style.display = 'flex';
+    ul.innerHTML = ''
 
     showFriendList(token);
 });
 iconAddFriend.addEventListener('click', () => {
     AddFriend.style.display = 'block';  
     MessagesList.style.display = 'none';
+    chatIndex.style.display = 'flex';
     FriendList.style.display = 'none';
     chatMessagesSetting.style.display = 'none';
+    ul.innerHTML = ''
+    addFriendResult.style.marginBottom = '0px';
 
     // 清空搜尋好友提示
     addFriendResult.textContent = '';
@@ -227,6 +245,7 @@ const emailContent = document.querySelector('.email-content');
 const chatMessagesSetting  = document.querySelector('.chat-messages_setting ');
 
 iconSetting.addEventListener('click', () => {
+    chatIndex.style.display = 'none';
     chatHeaderPartner.innerHTML = '';
     callButton.style.display = 'none';
     AddFriend.style.display = 'none';  
@@ -241,6 +260,9 @@ iconSetting.addEventListener('click', () => {
     AddFriend.style.display = 'none';
 
     nameContent.textContent = myName;
+    settingPic.style.backgroundImage = `url(${myIcon})`;
+
+    console.log('一開始'+myName);
     emailContent.textContent = myEmail;
 
     showFriendList(token);
@@ -272,23 +294,50 @@ const nameContent = document.querySelector('.name-content');
 const dataNameChange = document.querySelector('.data-name_change');
 
 dataNameChange.addEventListener('click', function () {
-    if (this.textContent === '修改') {
+    if (this.textContent === ' ') {
         // 切換到編輯模式
         nameContent.contentEditable = true;
         nameContent.focus();
-        this.textContent = '完成';
+        this.textContent = '  ';
     } else {
         // 完成編輯，將資料傳送到資料庫
         const newName = nameContent.textContent.trim();
         // 在這裡將 newName 送到資料庫進行更新
-        // 這裡只是一個範例，實際上你需要使用適當的方法和工具來實現資料更新
+        changeName(token, newName);
 
         // 切換回非編輯模式
         nameContent.contentEditable = false;
-        this.textContent = '修改';
+        this.textContent = '';
     }
 });
 
+// 修改姓名的API（確認中！！！！！！！）
+async function changeName(token, newName) {
+    try {
+        let response = await fetch('/api/changeName', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ newName }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+            nameContent.textContent = newName;
+            chatHeaderName.textContent = newName;
+
+            myName = newName;
+        } else {
+            addFriendResult.textContent = data.error;
+            console.log(data.error);
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
+    };
+};
 
 // 修改圖片
 const profilePic = document.getElementById('profilePic');
@@ -300,23 +349,48 @@ changeProfilePic.addEventListener('click', function () {
     fileInput.click();
 });
 
-fileInput.addEventListener('change', function () {
+const settingPic = document.querySelector('.setting-pic');
+
+fileInput.addEventListener('change', async function () {
     const selectedFile = fileInput.files[0];
 
-    if (selectedFile) {
-        // 處理上傳圖片的邏輯，例如發送到後端
+    // 限制只能夠上傳圖片檔
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    
+    if (!allowedImageTypes.includes(selectedFile.type)) {
+        alert('請選擇有效的圖片檔案（JPEG 或 PNG）');
+        fileInput.value = ''; // 清空檔案輸入框的值
+        return; // 中止後續的處理
+    } else {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+    
+        try {
+            // 使用 await 等待 fetch 完成
+            const response = await fetch('/api/changeMemberIcon', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData,
+            });
+            const data = await response.json();
+            const fileURL = data.message;
+    
+            if (response.status === 200) {
+                console.log(fileURL);
+                myIcon = fileURL;
+                settingPic.style.backgroundImage = `url(${myIcon})`;
+                chatHeaderIcon.style.backgroundImage = `url(${myIcon})`;
 
-        // 在這裡，你需要使用適當的方式將選擇的圖片上傳到資料庫
-
-        // 同時更新 setting-pic 的背景圖片
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            profilePic.style.backgroundImage = `url(${e.target.result})`;
-        };
-        reader.readAsDataURL(selectedFile);
+            } else {
+                console.log(data.error);
+            }
+        } catch (error) {
+            console.error('錯誤：', error);
+        }
     }
 });
-
 
 
 // 送出好友申請
@@ -346,6 +420,7 @@ async function addFriend(token) {
 
         const data = await response.json();
         friendInput.value = '';
+        addFriendResult.style.marginBottom = '15px';
 
         if (response.status === 200) {
             addFriendResult.textContent = data.message;
@@ -370,33 +445,38 @@ async function checkFriend(token) {
 
         let data = await response.json();
         let friendData = data.friendEmails;
+        console.log(friendData);
 
         // 每次進入都先清空待確認好友名單
         addFriendCheck.innerHTML = '';
 
         if (response.status === 200) {
-            friendData.forEach(email => {
+            friendData.forEach(({ email, name, icon }) => {
                 let friendList = document.createElement('div');
                 friendList.className = 'addFriend-list';
+
+                let friendIcon = document.createElement('div');
+                friendIcon.className = 'showFriendIcon';
+                friendIcon.style.backgroundImage = `url(${icon})`;
             
-                let friendEmail = document.createElement('div');
-                friendEmail.textContent = email;
+                let friendName = document.createElement('div');
+                friendName.className = 'friendName';
+                friendName.textContent = name;
             
                 let friendAgree = document.createElement('div');
-                friendAgree.textContent = 'O';
-                friendAgree.className = 'addFriend-status';
+                friendAgree.className = 'friendAgree';
                 friendAgree.addEventListener('click', () => {
-                    friendAnswerApi(email, 'O');
+                    friendAnswerApi(name, 'O');
                 });
             
                 let friendRefuse = document.createElement('div');
-                friendRefuse.textContent = 'X';
-                friendRefuse.className = 'addFriend-status';
+                friendRefuse.className = 'friendRefuse';
                 friendRefuse.addEventListener('click', () => {
-                    friendAnswerApi(email, 'X');
+                    friendAnswerApi(name, 'X');
                 });
             
-                friendList.appendChild(friendEmail);
+                friendList.appendChild(friendIcon);                
+                friendList.appendChild(friendName);
                 friendList.appendChild(friendAgree);
                 friendList.appendChild(friendRefuse);
                 addFriendCheck.appendChild(friendList);
@@ -461,12 +541,18 @@ async function showFriendList(token) {
         friendListCheck.innerHTML = '';
 
         if (response.status === 200) {
-            friendData.forEach(({ friendId, email, roomId }) => {
+            friendData.forEach(({ friendId, name, icon, roomId }) => {
                 let friendList = document.createElement('div');
                 friendList.className = 'showFriendList';
             
-                let friendEmail = document.createElement('div');
-                friendEmail.textContent = email;
+                let friendIcon = document.createElement('div');
+                friendIcon.className = 'showFriendIcon';
+                friendIcon.style.backgroundImage = `url(${icon})`;
+
+                let friendName = document.createElement('div');
+                friendName.textContent = name;
+                friendName.className = 'showFriendName';
+
                 friendList.addEventListener('click', () => {
                     // 取得歷史訊息
                     getHistoryMessage(token, roomId)
@@ -475,11 +561,13 @@ async function showFriendList(token) {
                     currentRoomId = roomId;
                     currentFriendId = friendId;
 
+                    chatIndex.style.display = 'none';
                     ul.innerHTML= '';
-                    showTalkPage(email, roomId, friendId);
+                    showTalkPage(name, icon, roomId, friendId);
                 });
             
-                friendList.appendChild(friendEmail);
+                friendList.appendChild(friendIcon);
+                friendList.appendChild(friendName);
                 friendListCheck.appendChild(friendList);
             });
         } else {
@@ -495,10 +583,13 @@ let currentRoomId = null;
 
 // 點擊好友後渲染到聊天頁面（處理中）
 const chatHeaderPartner = document.querySelector('.chat-header_partner');
+const chatPartnerIcon = document.querySelector('.chat-partner_icon');
+const chatPartnerName = document.querySelector('.chat-partner_name');
 
-function showTalkPage(email, roomId, friendId) {
+function showTalkPage(name, icon, roomId, friendId) {
     chatMessagesSetting.style.display = 'none';
-    chatHeaderPartner.textContent = email;
+    chatPartnerIcon.style.backgroundImage = `url(${icon})`;
+    chatPartnerName.textContent = name;
     callButton.style.display = 'block';
 
     // 動態生成聊天輸入框和發送按鈕  
@@ -508,6 +599,8 @@ function showTalkPage(email, roomId, friendId) {
     chatInputDiv.className = 'chat-footer_input';
     
 
+
+
     // 新增左邊容器用於放置上傳圖片按鈕
     const leftContainer = document.createElement('div');
     leftContainer.className = 'left-container';
@@ -516,8 +609,80 @@ function showTalkPage(email, roomId, friendId) {
     const uploadButton = document.createElement('div');
     uploadButton.className = 'upload-button';
 
+    // 創建 file-input
+    const fileChatInput = document.createElement('input');
+    fileChatInput.type = 'file';
+    fileChatInput.style.display = 'none';
+
+
+    // 添加事件監聽器，當選擇檔案時觸發
+    fileChatInput.addEventListener('change', handleFileSelect);
+
+    // 選擇圖片按鈕點擊時觸發檔案選擇
+    uploadButton.addEventListener('click', () => {
+        fileChatInput.click();
+    });
+
+    // 處理選擇檔案的函數
+    async function handleFileSelect() {
+        const selectedFile = fileChatInput.files[0];
+
+        // 限制可以上傳的檔案類型（先只能上傳圖片）
+        const selectedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+        if (!selectedFileTypes.includes(selectedFile.type)) {
+            alert('僅能選擇圖片檔');
+            return; // 中止後續的處理
+        } else {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('roomID', currentRoomId); // 添加 roomID
+            formData.append('senderID', currentUserId); // 添加 senderID
+            formData.append('receiverID', currentFriendId); // 添加 roomID
+
+            try {
+                // 使用 await 等待 fetch 完成
+                const response = await fetch('/api/addPicture', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData,
+                });
+                const data = await response.json();
+                const fileURL = data.message;
+        
+                // 要怎麼處理還在確認中
+                if (response.status === 200) {
+                    socket.emit('chat image', { room: currentRoomId, currentUserId, currentFriendId, fileURL });
+                } else {
+                    console.log(data.error);
+                }
+
+
+
+
+                // 使用 FileReader 讀取圖片內容
+                // const reader = new FileReader();             
+
+                // reader.onload = (event) => {
+                //     const imageData = event.target.result;
+
+                //     // 使用 Socket.io 將圖片資料傳送到後端
+                //     socket.emit('send image', { room: roomId, currentUserId, currentFriendId, imageData, fileType: selectedFile.type });
+                // };
+
+                // // 讀取圖片內容（暫不需要）
+                // reader.readAsDataURL(selectedFile);
+            } catch (error) {
+                console.error('錯誤：', error);
+            }
+        }
+    }
+
     // 添加上傳圖片按鈕到左邊容器
     leftContainer.appendChild(uploadButton);
+    leftContainer.appendChild(fileChatInput);
 
     // 將 chatInputDiv 添加到 chatFooter
     chatInputContainer.appendChild(leftContainer);
@@ -527,11 +692,10 @@ function showTalkPage(email, roomId, friendId) {
     const chatInput = document.createElement('textarea');
     chatInput.type = 'text';
     chatInput.className = 'chat-input';
-    chatInput.placeholder = 'Type your message';
+    chatInput.placeholder = '輸入訊息';
 
-    const sendButton = document.createElement('button');
+    const sendButton = document.createElement('div');
     sendButton.className = 'chat-button';
-    sendButton.textContent = 'Send';
 
     // 將輸入框和按鈕添加到 chatInputDiv
     chatInputDiv.appendChild(chatInput);
@@ -554,6 +718,8 @@ function showTalkPage(email, roomId, friendId) {
 };
 
 
+
+
 // 取得歷史訊息
 async function getHistoryMessage(token, roomId) {
     try {
@@ -568,10 +734,11 @@ async function getHistoryMessage(token, roomId) {
 
         let data = await response.json();
         let history = data.HistoryData;
+        console.log(history);
 
         if (response.status === 200) {
-            history.forEach(({ sender_id, receiver_id, message, time }) => {
-                createMessageElement(sender_id, receiver_id, message, time);
+            history.forEach(({ sender_id, receiver_id, message, time, icon }) => {
+                createMessageElement(sender_id, receiver_id, message, time, icon);
             });
 
         } else {
@@ -582,48 +749,141 @@ async function getHistoryMessage(token, roomId) {
     };
 };
 
-// 生成歷史訊息（確認中）
-function createMessageElement(sender_id, receiver_id, message, time) {
+
+function createMessageElement(sender_id, receiver_id, message, time, icon) {
+    chatIndex.style.display = 'none';
     const messageContainer = document.createElement('div');
     const textMessage = document.createElement('div');
-    textMessage.textContent = message;
+    const textTime = document.createElement('div');
 
-    // 添加适当的样式和边框
-    textMessage.style.border = '1px solid #aaaaaa';
-    textMessage.style.borderRadius = '10px';
-    textMessage.style.padding = '7px';
-    messageContainer.style.marginBottom = '5px'; // 调整此处的 margin
-    messageContainer.style.padding = '5px'; // 调整此处的 padding
+    const formattedDateTime = formatDateTime(time);
+    textTime.textContent = formattedDateTime;
+    textTime.className = 'textTime'
 
-    // 如果 currentUserId 等于 sender_id，则是自己的消息
     if (currentUserId === sender_id) {
-        // 设置底色为淺綠色
-        textMessage.style.backgroundColor = '#c1ecc1';
-        // 设置文本右对齐
-        textMessage.style.textAlign = 'right';
         // 将消息容器放在右边
-        messageContainer.style.marginLeft = 'auto';
-        messageContainer.style.textAlign = 'right';
+        messageContainer.className = 'messageContainerRight';    
+
+        if (isImageURL(message)) {
+            // 如果是圖片網址，將圖片設為背景圖
+            textMessage.className = 'chatImageRight';
+            textMessage.style.backgroundImage = `url(${message})`;
+        } else {
+            // 如果是文字訊息，則創建文字消息元素
+            textMessage.textContent = message;
+            textMessage.className = 'textMessageRight'
+        }
+        messageContainer.appendChild(textTime);
+        messageContainer.appendChild(textMessage);
     } else {
-        // 设置底色为灰色
-        textMessage.style.backgroundColor = '#d9d9d9';
-        // 设置文本左对齐
-        textMessage.style.textAlign = 'left';
-        // 将消息容器放在左边
-        messageContainer.style.marginRight = 'auto';
-        messageContainer.style.textAlign = 'left';
+        messageContainer.className = 'messageContainerLeft';
+
+        let messageIcon = document.createElement('div');
+        messageIcon.className = 'showFriendIcon';
+        messageIcon.style.backgroundImage = `url(${icon})`;
+
+        if (isImageURL(message)) {
+            // 如果是圖片網址，將圖片設為背景圖
+            textMessage.className = 'chatImageLeft';
+            textMessage.style.backgroundImage = `url(${message})`;
+        } else {
+            // 如果是文字訊息，則創建文字消息元素
+            textMessage.textContent = message;
+            textMessage.className = 'textMessageLeft'
+        }
+        messageContainer.appendChild(messageIcon);        
+        messageContainer.appendChild(textMessage);
+        messageContainer.appendChild(textTime);
     }
 
-    // 使边框包裹文字
-    textMessage.style.display = 'inline-block';
+    // if (isImageURL(message) && currentUserId === sender_id) {
+    //     // 如果是圖片網址，將圖片設為背景圖
+    //     textMessage.className = 'chatImage';
+    //     textMessage.style.backgroundImage = `url(${message})`;
+    // } else (isImageURL(message) && currentUserId !== sender_id) {
+    //     // 如果是文字訊息，則創建文字消息元素
+    //     textMessage.textContent = message;
+    // }
+
+    // // 如果 currentUserId 等于 sender_id，则是自己的消息
+    // if (currentUserId === sender_id) {
+    //     // 设置底色为淺綠色
+    //     textMessage.className = 'textMessageRight'
+    //     // 将消息容器放在右边
+    //     messageContainer.className = 'messageContainerRight';       
+
+    //     messageContainer.appendChild(textTime);
+    //     messageContainer.appendChild(textMessage);
+    // } else {
+    //     // 设置底色为灰色
+    //     textMessage.className = 'textMessageLeft'
+    //     // 将消息容器放在左边
+    //     messageContainer.className = 'messageContainerLeft';     
+
+    //     messageContainer.appendChild(textMessage);
+    //     messageContainer.appendChild(textTime); 
+    // }
 
     // 将文本消息添加到消息容器
-    messageContainer.appendChild(textMessage);
     ul.appendChild(messageContainer);
 
-    // 滚动到底部
+    // 滾動到底部
     ul.scrollTop = ul.scrollHeight;
 }
+
+// 判斷是否為圖片網址
+function isImageURL(url) {
+    // 這只是一個簡單的檢查，您可能需要一些更複雜的邏輯來確認 URL 是否是圖片 URL
+    return /\.(jpeg|jpg|gif|png)$/i.test(url);
+}
+
+
+// 生成歷史訊息（確認中、原本）
+// function createMessageElement(sender_id, receiver_id, message, time) {
+
+//     chatIndex.style.display = 'none';
+//     const messageContainer = document.createElement('div');
+//     const textMessage = document.createElement('div');
+//     textMessage.textContent = message;
+
+//     // 添加适当的样式和边框
+//     textMessage.style.border = '1px solid #aaaaaa';
+//     textMessage.style.borderRadius = '10px';
+//     textMessage.style.padding = '7px';
+//     messageContainer.style.marginBottom = '5px'; // 调整此处的 margin
+//     messageContainer.style.padding = '5px'; // 调整此处的 padding
+
+//     // 如果 currentUserId 等于 sender_id，则是自己的消息
+//     if (currentUserId === sender_id) {
+//         // 设置底色为淺綠色
+//         textMessage.style.backgroundColor = '#c1ecc1';
+//         // 设置文本右对齐
+//         textMessage.style.textAlign = 'right';
+//         // 将消息容器放在右边
+//         messageContainer.style.marginLeft = 'auto';
+//         messageContainer.style.textAlign = 'right';
+//     } else {
+//         // 设置底色为灰色
+//         textMessage.style.backgroundColor = '#d9d9d9';
+//         // 设置文本左对齐
+//         textMessage.style.textAlign = 'left';
+//         // 将消息容器放在左边
+//         messageContainer.style.marginRight = 'auto';
+//         messageContainer.style.textAlign = 'left';
+//     }
+
+//     // 使边框包裹文字
+//     textMessage.style.display = 'inline-block';
+
+//     // 将文本消息添加到消息容器
+//     messageContainer.appendChild(textMessage);
+//     ul.appendChild(messageContainer);
+
+//     // 滚动到底部
+//     ul.scrollTop = ul.scrollHeight;
+// }
+
+
 
 
 // 顯示聊天列表（處理中）
@@ -639,12 +899,13 @@ async function getMessageList(token) {
 
         let data = await response.json();
         let messageList = data.messageList;
+        console.log(messageList);
 
         if (response.status === 200) {
             messageListCheck.innerHTML= '';
 
-            messageList.forEach(({ friend_id, room_id, friendEmail, finalMessage, finalMessageTime }) => {
-                createMessageList(friend_id, room_id, friendEmail, finalMessage, finalMessageTime);
+            messageList.forEach(({ friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime }) => {
+                createMessageList(friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime);
             });
 
         } else {
@@ -656,38 +917,37 @@ async function getMessageList(token) {
 };
 
 // 建立聊天列表（確認中）
-function createMessageList(friend_id, room_id, friendEmail, finalMessage, finalMessageTime) {
+function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime) {
     const formattedDateTime = formatDateTime(finalMessageTime);
 
     let messageList = document.createElement('div');
-    messageList.className = 'showMessageList';
+    messageList.className = 'showMessageList'; 
 
-    let messageContainer = document.createElement('div');
-    messageContainer.style.display = 'flex';
-    messageContainer.style.flexDirection = 'column';  // 列布局
+    let messageIcon = document.createElement('div');
+    messageIcon.className = 'showFriendIcon';
+    messageIcon.style.backgroundImage = `url(${icon})`;
 
-    let messageFriendEmail = document.createElement('div');
-    messageFriendEmail.textContent = friendEmail;
-    messageFriendEmail.style.fontSize = '16px';  // 设置字体大小，根据需要调整
+    let messageData = document.createElement('div');
+    messageData.className = 'showData';
 
-    let messageContentContainer = document.createElement('div');
-    messageContentContainer.style.display = 'flex';
-    messageContentContainer.style.alignItems = 'baseline';  // 使两个元素基线对齐
+    let messageDataContainer = document.createElement('div');
+    messageDataContainer.className = 'showData_container';
 
-    let messageFriendFinal = document.createElement('div');
-    messageFriendFinal.textContent = finalMessage;
-    messageFriendFinal.style.fontSize = '14px';  // 设置字体大小，根据需要调整
+    let messageFriendMessage = document.createElement('div');
+    messageFriendMessage.className = 'showFriendMessage';
+    if (isImageURL(finalMessage)) {
+        messageFriendMessage.textContent = '已傳送圖片';
+    } else {
+        messageFriendMessage.textContent = finalMessage;
+    }
 
-    let messageTime = document.createElement('div');
-    messageTime.textContent = formattedDateTime;
-    messageTime.style.fontSize = '14px';  // 设置字体大小，根据需要调整
-    messageTime.style.marginLeft = 'auto';  // 推到最右邊
+    let messageFriendName = document.createElement('div');
+    messageFriendName.textContent = name;
+    messageFriendName.className = 'messageFriendName';
 
-    messageContentContainer.appendChild(messageFriendFinal);
-    messageContentContainer.appendChild(messageTime);
-
-    messageContainer.appendChild(messageFriendEmail);
-    messageContainer.appendChild(messageContentContainer);
+    let messageFriendTime = document.createElement('div');
+    messageFriendTime.textContent = formattedDateTime;
+    messageFriendTime.className = 'showFriendTime';
 
     messageList.addEventListener('click', () => {
         // 取得歷史訊息
@@ -698,10 +958,15 @@ function createMessageList(friend_id, room_id, friendEmail, finalMessage, finalM
         currentFriendId = friend_id;
 
         ul.innerHTML= '';
-        showTalkPage(friendEmail, room_id, friend_id);
+        showTalkPage(name, icon, room_id, friend_id);
     });
 
-    messageList.appendChild(messageContainer);
+    messageDataContainer.appendChild(messageFriendName);
+    messageDataContainer.appendChild(messageFriendTime);
+    messageData.appendChild(messageDataContainer);
+    messageData.appendChild(messageFriendMessage);
+    messageList.appendChild(messageIcon);
+    messageList.appendChild(messageData);
     messageListCheck.appendChild(messageList);
 }
 
@@ -716,153 +981,120 @@ function formatDateTime(isoString) {
     return `${month}-${day} ${hours}:${minutes}`;
 }
 
-function appendMessageToUI(message, sendUserId) {
-    // const messageContainer = document.createElement('div');
-    // const textMessage = document.createElement('div');
-    // textMessage.textContent = `${message}`;
+function appendMessageToUI(message, sender_id, time) {
 
-    // if (currentUserId == sendUserId) {
-    //     textMessage.style.textAlign = 'right';
-    //     messageContainer.style.marginLeft = 'auto';
-    //     textMessage.style.backgroundColor = '#c1ecc1';
-    // } else {
-    //     textMessage.style.backgroundColor = '#d9d9d9';
-    // }
-
-    // textMessage.style.display = 'inline-block';
-    // textMessage.style.border = '1px solid #aaaaaa';
-
-    // messageContainer.appendChild(textMessage);
-    // ul.appendChild(textMessage);
     const messageContainer = document.createElement('div');
     const textMessage = document.createElement('div');
-    textMessage.textContent = message;
+    const textTime = document.createElement('div');
 
-    // 添加适当的样式和边框
-    textMessage.style.border = '1px solid #aaaaaa';
-    textMessage.style.borderRadius = '10px';
-    textMessage.style.borderRadius = '10px';
-    textMessage.style.padding = '7px';
-    messageContainer.style.marginBottom = '5px'; // 调整此处的 margin
-    messageContainer.style.padding = '5px'; // 调整此处的 padding
+    const formattedDateTime = formatDateTime(time);
+    textTime.textContent = formattedDateTime;
+    textTime.className = 'textTime'
 
-    // 如果 currentUserId 等于 sendUserId，则是自己的消息
-    if (currentUserId === sendUserId) {
-        // 设置底色为淺綠色
-        textMessage.style.backgroundColor = '#c1ecc1';
-        // 设置文本右对齐
-        textMessage.style.textAlign = 'right';
+    if (currentUserId === sender_id) {
         // 将消息容器放在右边
-        messageContainer.style.marginLeft = 'auto';
-        messageContainer.style.textAlign = 'right';
+        messageContainer.className = 'messageContainerRight';    
+
+        if (isImageURL(message)) {
+            // 如果是圖片網址，將圖片設為背景圖
+            textMessage.className = 'chatImageRight';
+            textMessage.style.backgroundImage = `url(${message})`;
+        } else {
+            // 如果是文字訊息，則創建文字消息元素
+            textMessage.textContent = message;
+            textMessage.className = 'textMessageRight'
+        }
+        messageContainer.appendChild(textTime);
+        messageContainer.appendChild(textMessage);
     } else {
-        // 设置底色为灰色
-        textMessage.style.backgroundColor = '#d9d9d9';
-        // 设置文本左对齐
-        textMessage.style.textAlign = 'left';
-        // 将消息容器放在左边
-        messageContainer.style.marginRight = 'auto';
-        messageContainer.style.textAlign = 'left';
+        messageContainer.className = 'messageContainerLeft';     
+
+        if (isImageURL(message)) {
+            // 如果是圖片網址，將圖片設為背景圖
+            textMessage.className = 'chatImageLeft';
+            textMessage.style.backgroundImage = `url(${message})`;
+        } else {
+            // 如果是文字訊息，則創建文字消息元素
+            textMessage.textContent = message;
+            textMessage.className = 'textMessageLeft'
+        }
+        messageContainer.appendChild(textMessage);
+        messageContainer.appendChild(textTime);
     }
-
-    // 使边框包裹文字
-    textMessage.style.display = 'inline-block';
-
-    // 将文本消息添加到消息容器
-    messageContainer.appendChild(textMessage);
 
     // 将消息容器添加到聊天窗口
     ul.appendChild(messageContainer);
+    ul.scrollTop = ul.scrollHeight;
+}
+
+
+
+function appendImageToUI(message, sendUserId, time) {
+    console.log(message, sendUserId, time);
+    const messageContainer = document.createElement('div');
+    const textMessage = document.createElement('div');
+    const textTime = document.createElement('div');
+
+    const formattedDateTime = formatDateTime(time);
+    textTime.textContent = formattedDateTime;
+    textTime.className = 'textTime'
+
+    if (currentUserId === sendUserId) {
+        // 将消息容器放在右边
+        messageContainer.className = 'messageContainerRight';    
+
+        if (isImageURL(message)) {
+            // 如果是圖片網址，將圖片設為背景圖
+            textMessage.className = 'chatImageRight';
+            textMessage.style.backgroundImage = `url(${message})`;
+        } else {
+            // 如果是文字訊息，則創建文字消息元素
+            textMessage.textContent = message;
+            textMessage.className = 'textMessageRight'
+        }
+        messageContainer.appendChild(textTime);
+        messageContainer.appendChild(textMessage);
+    } else {
+        messageContainer.className = 'messageContainerLeft';     
+
+        if (isImageURL(message)) {
+            // 如果是圖片網址，將圖片設為背景圖
+            textMessage.className = 'chatImageLeft';
+            textMessage.style.backgroundImage = `url(${message})`;
+        } else {
+            // 如果是文字訊息，則創建文字消息元素
+            textMessage.textContent = message;
+            textMessage.className = 'textMessageLeft'
+        }
+        messageContainer.appendChild(textMessage);
+        messageContainer.appendChild(textTime);
+    }
+    ul.appendChild(messageContainer);
+    ul.scrollTop = ul.scrollHeight;
 }
 
 socket.on('chat message', (data) => {
-    const { room, message, currentUserId } = data;
+    const { room, message, currentUserId, time } = data;
+    console.log('我是時間'+time);
     
     // 在前端顯示消息
     if (room === currentRoomId) {
-        appendMessageToUI(message, currentUserId);
+        appendMessageToUI(message, currentUserId, time);
     }
 });
 
-// // 本次新增
-// socket.on('friend stream', (friendStream) => {
-//     const friendAudio = document.getElementById('friendAudio');
-  
-//     const audioContext = new AudioContext();
-//     const source = audioContext.createMediaStreamSource(friendStream);
-  
-//     source.connect(audioContext.destination);
-  
-//     friendAudio.srcObject = friendStream;
-//     friendAudio.play().catch((error) => {
-//       console.error('播放音訊時發生錯誤：', error);
-//     });
-//   });
 
-
-// 語音新增
-// 初始化 Peer.js（早就不需要金鑰==）
-// const peer = new Peer();
-
-// undefined 表示使用默认生成的 Peer ID，由 Peer.js 自动生成。
-// host: '/' 表示将连接的主机设置为当前主机。
-// port: 3000 表示将连接的端口设置为 3000。
-// path: '/peerjs' 表示将连接的路径设置为 '/peerjs'。
-// const peer = new Peer(undefined, {
-//     host: '/',
-//     port: 3000,
-//     path: '/peerjs',
-// });
-
-// 聲明一個可變的變數 call，它將用於存儲正在進行的通話
-// 將通話對象賦值給這個變數，以便以後進行控制（例如結束通話）
-// let call; // 初始值為 undefined 的變數
-
-// 監聽 Peer.js 連接成功的事件
-// 這裡的 ID 是我自己的 ID
-// peer.on('open', (id) => {
-//     console.log('My peer ID is: ' + id);
-
-//     // 點擊開始通話按鈕的事件處理
-//     document.getElementById('startCallButton').addEventListener('click', () => {
-//         // 發送 'call friend' 事件給後端，通知後端要發起通話
-//         const friendPeerId = prompt('請輸入朋友的 Peer ID：');
-//         call = peer.call(friendPeerId, null);
-
-//         call.on('stream', (friendStream) => {
-//             // 將朋友的音頻流設置為 <audio> 元素的 srcObject
-//             document.getElementById('friendAudio').srcObject = friendStream;
-//         });
-
-//         // 切換按鈕顯示
-//         document.getElementById('startCallButton').style.display = 'none';
-//         document.getElementById('endCallButton').style.display = 'inline';
-//     });
-
-//     // 點擊結束通話按鈕的事件處理
-//     document.getElementById('endCallButton').addEventListener('click', () => {
-//         // 結束通話
-//         if (call) {
-//             call.close();
-//         }
-
-//         // 切換按鈕顯示
-//         document.getElementById('startCallButton').style.display = 'inline';
-//         document.getElementById('endCallButton').style.display = 'none';
-//     });
-// });
-
-// // 監聽來自 Socket.IO 的 'friend stream' 事件
-// socket.on('friend stream', (friendStream) => {
-//     // 將朋友的音頻流設置為 <audio> 元素的 srcObject
-//     document.getElementById('friendAudio').srcObject = friendStream;
-// });
-
-
-
+socket.on('chat image', (data) => {
+    const { room, fileURL, currentUserId, time } = data;
+    
+    // 在前端顯示消息
+    if (room === currentRoomId) {
+        appendImageToUI(fileURL, currentUserId, time);
+    }
+});
 
 // 統整的版本
-const callButton = document.getElementById('callButton');
+const callButton = document.querySelector('.callButton');
 const callRequestModal = document.getElementById('callRequestModal');
 const cancelCallButton = document.getElementById('cancelCallButton');
 const callResponseModal = document.getElementById('callResponseModal');

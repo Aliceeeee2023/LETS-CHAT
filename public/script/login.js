@@ -16,10 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loginError.style.display = 'none';
 });
 
+let emailInput = document.querySelector('.login-email');
+let passwordInput = document.querySelector('.login-password');
+
 // 將登入資料送至後端處理
 async function submitloginForm() {
-    let emailInput = document.querySelector('.login-email');
-    let passwordInput = document.querySelector('.login-password');
     let email = emailInput.value;
     let password = passwordInput.value;
 
@@ -69,6 +70,9 @@ const token = localStorage.getItem('token');
 document.addEventListener('DOMContentLoaded', () => {
     document.body.style.display = 'none';
     checkUsers(token);
+
+    emailInput.value = 'test@gmail.com';
+    passwordInput.value = 'test1234';
 });
 
 async function checkUsers(token) {
