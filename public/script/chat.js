@@ -604,6 +604,8 @@ async function showFriendList(token) {
 
 // 確認當下點擊的ID
 let currentRoomId = null;
+let currentFriendName = null;
+let currentFriendIcon = null;
 
 // 點擊好友後渲染到聊天頁面（處理中）
 const chatHeaderSetting = document.querySelector('.chat-header_setting');
@@ -611,6 +613,14 @@ const chatPartnerIcon = document.querySelector('.chat-partner_icon');
 const chatPartnerName = document.querySelector('.chat-partner_name');
 
 function showTalkPage(name, icon, roomId, friendId) {
+    console.log(name, icon);
+    currentFriendName = name;
+    currentFriendIcon = icon;
+
+    // 處理雙方通話時顯示的名字跟ICON
+    // finalProgressName = name;
+    // finalProgressIcon = icon;
+
     chatHeaderSetting.innerHTML = '';
     chatPartnerIcon.style.display = 'block';
     chatMessagesSetting.style.display = 'none';
@@ -998,12 +1008,23 @@ function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMes
     messageListCheck.appendChild(messageList);
 }
 
-// 處理時間
+// 處理即時訊息時間
+function formatNowDateTime(isoString) {
+    const date = new Date(isoString);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = (date.getHours()).toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${month}-${day} ${hours}:${minutes}`;
+}
+
+// 處理歷史訊息時間
 function formatDateTime(isoString) {
     const date = new Date(isoString);
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    const hours = (date.getHours()).toString().padStart(2, '0');  // 加 8 小時
+    let hours = (date.getHours() + 8) % 24;  // 加 8 小時並對 24 取餘數
     const minutes = date.getMinutes().toString().padStart(2, '0');
 
     return `${month}-${day} ${hours}:${minutes}`;
@@ -1015,7 +1036,7 @@ function appendMessageToUI(message, sender_id, time) {
     const textMessage = document.createElement('div');
     const textTime = document.createElement('div');
 
-    const formattedDateTime = formatDateTime(time);
+    const formattedDateTime = formatNowDateTime(time);
     textTime.textContent = formattedDateTime;
     textTime.className = 'textTime'
 
@@ -1063,7 +1084,7 @@ function appendImageToUI(message, sendUserId, time) {
     const textMessage = document.createElement('div');
     const textTime = document.createElement('div');
 
-    const formattedDateTime = formatDateTime(time);
+    const formattedDateTime = formatNowDateTime(time);
     textTime.textContent = formattedDateTime;
     textTime.className = 'textTime'
 
@@ -1124,12 +1145,13 @@ socket.on('chat image', (data) => {
 // 統整的版本
 const callButton = document.querySelector('.callButton');
 const callRequestModal = document.getElementById('callRequestModal');
-const cancelCallButton = document.getElementById('cancelCallButton');
+const cancelCallButton = document.querySelector('.cancelCallButton');
 const callResponseModal = document.getElementById('callResponseModal');
-const acceptCallButton = document.getElementById('acceptCallButton');
-const rejectCallButton = document.getElementById('rejectCallButton');
+const acceptCallButton = document.querySelector('.acceptCallButton');
+const rejectCallButton = document.querySelector('.rejectCallButton');
 const callInProgressModal = document.getElementById('callInProgressModal');
-const hangupButton = document.getElementById('hangupButton');
+const hangupButton = document.querySelector('.hangupButton');
+
 const localAudio = document.getElementById('localAudio');
 const remoteAudio = document.getElementById('remoteAudio');
 
@@ -1151,7 +1173,7 @@ callButton.addEventListener('click', async () => {
         
 
         // 显示等待对方接听的模态框
-        showCallRequestModal();
+        showCallRequestModal(currentFriendName, currentFriendIcon);
 
     } catch (error) {
         console.error('Error fetching friend ID:', error);
@@ -1161,15 +1183,22 @@ callButton.addEventListener('click', async () => {
 
 // 定義一個全局變數，用於存儲 callerId
 let currentCallerId;
+let currentCallName = null;
+let currentCallIcon = null
 
 // 添加事件監聽器，處理通話請求
-socket.on('incoming-call', ({ callerId }) => {
+socket.on('incoming-call', ({ callerId, callName, callIcon }) => {
     currentCallerId = callerId;
+    currentCallName = callName;
+    currentCallIcon = callIcon;
+
+    // 處理雙方通話時的姓名跟ICON
+    // finalProgressName = callName;
+    // finalProgressIcon = callIcon;
 
     // 顯示來自 callerId 的通話請求模態框
-    console.log(currentUserId);
-    showCallResponseModal(callerId);
-    // showCallResponseModal(callerId);
+    console.log(callerId, callName, callIcon);
+    showCallResponseModal(callerId, callName, callIcon);
 });
 
 // peer 有可能也要送全局（id問題）
@@ -1200,12 +1229,20 @@ socket.on('start-webrtc-connection', (data) => {
     // 關閉等待對方接受的畫面
     closeCallRequestModal();
     // 先顯示正在通話的畫面
-    showCallInProgressModal();
+    // showCallInProgressModal();
 
-    const { initiatorId, acceptId } = data;
+    const { initiatorId, acceptId, isCaller } = data;
     // 將 acceptId 賦值給全局變數
     callRequestId = initiatorId;
     callAcceptId = acceptId;
+
+    if (isCaller) {
+        // 在這裡處理發起通話者的資訊
+        showCallInProgressModal(currentFriendName, currentFriendIcon);
+    } else {
+        // 在這裡處理接受通話者的資訊
+        showCallInProgressModal(currentCallName, currentCallIcon);
+    }
 
     // 在這裡觸發 WebRTC 連線的建立流程
     // 使用 initiatorId 和 acceptId 這兩個標識符
@@ -1293,26 +1330,43 @@ socket.on('reject-other-call', () => {
     closeCallRequestModal();
 });
 
+const callRequestIcon = document.querySelector('.callRequestIcon');
+const callRequestName = document.querySelector('.callRequestName');
+
+// let finalProgressName = null;
+// let finalProgressIcon = null;
+
 // 各種匡匡處理
-function showCallRequestModal(currentUserId) { // 要把ID塞入框李
+function showCallRequestModal(currentFriendName) { // 要把ID塞入框李
+    callRequestName.textContent = currentFriendName;
+    callRequestIcon.style.backgroundImage = `url(${currentFriendIcon})`;
     callRequestModal.style.display = 'block';
 }
 function closeCallRequestModal() {
     callRequestModal.style.display = 'none';
 }
 
-const comingCallName = document.querySelector('.comingCallName');
+const callResponseIcon = document.querySelector('.callResponseIcon');
+const callResponseName = document.querySelector('.callResponseName');
 
-function showCallResponseModal(callerId) {
+
+function showCallResponseModal(callerId, callName, callIcon) {
     callResponseModal.style.display = 'block';
-    comingCallName.textContent = callerId + '來電';
+    callResponseName.textContent = callName;
+    callResponseIcon.style.backgroundImage = `url(${callIcon})`;
     // 要顯示來電名稱（後面要改）
 }
 function closeCallResponseModal() {
     callResponseModal.style.display = 'none';
 }
-function showCallInProgressModal() {
+
+const callProgressIcon = document.querySelector('.callProgressIcon');
+const callProgressName = document.querySelector('.callProgressName');
+
+function showCallInProgressModal(name, icon) {
     callInProgressModal.style.display = 'block';
+    callProgressName.textContent = name;
+    callProgressIcon.style.backgroundImage = `url(${icon})`;
 }
 function closeCallInProgressModal() {
     callInProgressModal.style.display = 'none';

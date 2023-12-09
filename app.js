@@ -116,16 +116,28 @@ io.on('connection', (socket) => {
     });
 
     // 處理前端發送的通話請求
-    socket.on('call-request', ({ currentUserId, currentFriendId }) => {
-        // 在這裡處理通話請求，例如向 friendId 發送通知
-        // 這裡僅提供一個基本的示例
-        // socket.join(currentRoomId);
-        console.log('撥打者ID：' + currentUserId, '朋友ID：' + currentFriendId);
-
-        // 不用管朋友在不在線（因為不能讓對方知道在不在線）
-        // 就正常發送請求，然後如果對方沒回應則中斷對話
-        const friendSocketId = userSocketMap[currentFriendId];
-        io.to(friendSocketId).emit('incoming-call', { callerId: currentUserId });
+    socket.on('call-request', async ({ currentUserId, currentFriendId }) => {
+        try {
+            // 在這裡處理通話請求，例如向 friendId 發送通知
+            // 這裡僅提供一個基本的示例
+            // socket.join(currentRoomId);
+            console.log('撥打者ID：' + currentUserId, '朋友ID：' + currentFriendId);
+            console.log(userSocketMap);
+    
+            // 不用管朋友在不在線（因為不能讓對方知道在不在線）
+            // 就正常發送請求，然後如果對方沒回應則中斷對話
+            const friendSocketId = userSocketMap[currentFriendId];
+            
+            // 注意：這裡加上了 try-catch 來處理潛在的錯誤
+            const friendDataResult = await searchFriendData(currentUserId);
+            const callRequestName = friendDataResult[0]['0'].name;
+            const callRequestIcon = friendDataResult[0]['0'].icon;
+    
+            io.to(friendSocketId).emit('incoming-call', { callerId: currentUserId, callName: callRequestName, callIcon: callRequestIcon});
+        } catch (error) {
+            console.error('處理通話請求時發生錯誤：', error);
+            // 在這裡加上其他錯誤處理邏輯，例如發送錯誤通知給用戶等
+        }
     });
 
     // 等待確認中
@@ -144,10 +156,10 @@ io.on('connection', (socket) => {
             
             // 通知發起通話的使用者開始建立 WebRTC 連線
             // initiatorId 是用來表示 WebRTC 連接的發起方
-            io.to(callerSocketId).emit('start-webrtc-connection', { initiatorId: callerSocketId, acceptId: acceptSocketId });
+            io.to(callerSocketId).emit('start-webrtc-connection', { initiatorId: callerSocketId, acceptId: acceptSocketId, isCaller: true});
 
             // 通知接受通話的使用者開始建立 WebRTC 連線
-            io.to(acceptSocketId).emit('start-webrtc-connection', { initiatorId: callerSocketId, acceptId: acceptSocketId });
+            io.to(acceptSocketId).emit('start-webrtc-connection', { initiatorId: callerSocketId, acceptId: acceptSocketId, isCaller: false });
  
         }
     });
@@ -366,6 +378,14 @@ AWS.config.update({
 async function saveMessageToDatabase(room, currentUserId, currentFriendId, message) {
 		const query = 'INSERT INTO messages (room, sender_id, receiver_id, message) VALUES (?, ?, ?, ?)';
 		const getFriendResult = await db.query(query, [room, currentUserId, currentFriendId, message]);
+}
+
+// 取出來電朋友的資料
+async function searchFriendData(currentFriendId) {
+    const query = 'SELECT name, icon FROM users WHERE id = ?';
+    const getFriendResult = await db.query(query, [currentFriendId]);
+
+    return getFriendResult;
 }
 
 server.listen(port, () => {

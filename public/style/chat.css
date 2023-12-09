@@ -110,7 +110,7 @@
     max-height: 399px;
 }
 .chat-addFriend {
-    overflow: hidden;
+    overflow: auto;
 }
 .addFriend-search {
     padding: 15px;
@@ -181,10 +181,10 @@
 }
 .addFriend-check {
     padding: 5px;
-    overflow: auto;
+    /* overflow: auto; */
     /* overflow-y: auto;
     overflow: hidden; */
-    max-height: 270px;
+    /* max-height: 270px; */
 }
 
 
@@ -587,6 +587,54 @@
 /* 各種通話窗口顯示 */
 .modal {
     width: 150px;
-    height: 200px;
+    height: 250px;
     border-radius: 8px;
+}
+
+.callRequestIcon, .callResponseIcon, .callProgressIcon {
+    border-radius: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    margin: auto;
+}
+
+.callRequestName, .callResponseName, .callProgressName {
+    font-size: 18px;
+    font-weight: 500;
+    color: #4b4848;
+}
+
+.callRequestStatus, .callResponseStatus, .callProgressStatus {
+    font-size: 16px;
+    color: #535252;
+    margin-bottom: 40px;
+}
+
+.cancelCallButton, .rejectCallButton, .hangupButton {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('../images/refuse-icon.JPG');
+    width: 70px;
+    height: 70px;
+    cursor: pointer;
+    margin: auto;
+}
+
+.responseButton {
+    display: flex;
+}
+.acceptCallButton {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('../images/call-icon.JPG');
+    width: 70px;
+    height: 70px;
+    cursor: pointer;
+    margin: auto;
 }

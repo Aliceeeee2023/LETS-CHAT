@@ -145,25 +145,33 @@
         <!-- Modal for Call Request -->
         <div id="callRequestModal" class="modal" style="display: none;">
             <div class="modal-content">
-                <p>Calling...</p>
-                <button id="cancelCallButton">Cancel Call</button>
+                <div class="callRequestIcon"></div>
+                <div class="callRequestName"></div>
+                <div class="callRequestStatus">等待對方接聽</div>
+                <div class="cancelCallButton"></div>
             </div>
         </div>
 
         <!-- Modal for Call Response -->
         <div id="callResponseModal" class="modal" style="display: none;">
             <div class="modal-content">
-                <p class="comingCallName">Incoming Call</p>
-                <button id="acceptCallButton">Accept</button>
-                <button id="rejectCallButton">Reject</button>
+                <div class="callResponseIcon"></div>
+                <div class="callResponseName"></div>
+                <div class="callResponseStatus">來電中</div>
+                <div class="responseButton">
+                    <div class="acceptCallButton"></div>
+                    <div class="rejectCallButton"></div>
+                </div>
             </div>
         </div>
 
         <!-- Modal for Call in Progress -->
         <div id="callInProgressModal" class="modal" style="display: none;">
             <div class="modal-content">
-                <p>Call in Progress</p>
-                <button id="hangupButton">Hang Up</button>
+                <div class="callProgressIcon"></div>
+                <div class="callProgressName"></div>
+                <div class="callProgressStatus">通話中</div>
+                <div class="hangupButton"></div>
             </div>
         </div>
 
