@@ -215,6 +215,12 @@ iconMessagesList.addEventListener('click', () => {
     chatIndex.style.display = 'flex';
     chatHeaderSetting.innerHTML = '';
     ul.innerHTML = ''
+    chatInputContainer.innerHTML = '';
+    chatPartnerName.innerHTML = '';
+    chatPartnerIcon.style.display = 'none';
+    callButton.style.display = 'none';
+    chatMessagesContent.style.borderTop = 'none';
+    chatMessagesContent.style.borderBottom = 'none';
 
     getMessageList(token);
 });
@@ -226,6 +232,12 @@ iconFriendList.addEventListener('click', () => {
     chatMessagesSetting.style.display = 'none';
     chatIndex.style.display = 'flex';
     ul.innerHTML = ''
+    chatInputContainer.innerHTML = '';
+    chatPartnerName.innerHTML = '';
+    chatPartnerIcon.style.display = 'none';
+    callButton.style.display = 'none';
+    chatMessagesContent.style.borderTop = 'none';
+    chatMessagesContent.style.borderBottom = 'none';
 
     showFriendList(token);
 });
@@ -237,7 +249,13 @@ iconAddFriend.addEventListener('click', () => {
     FriendList.style.display = 'none';
     chatMessagesSetting.style.display = 'none';
     ul.innerHTML = ''
+    chatInputContainer.innerHTML = '';
+    chatPartnerName.innerHTML = '';
+    chatPartnerIcon.style.display = 'none';
+    callButton.style.display = 'none';
     addFriendResult.style.marginBottom = '0px';
+    chatMessagesContent.style.borderTop = 'none';
+    chatMessagesContent.style.borderBottom = 'none';
 
     // 清空搜尋好友提示
     addFriendResult.textContent = '';
@@ -262,6 +280,8 @@ iconSetting.addEventListener('click', () => {
 
     console.log('一開始'+myName);
     emailContent.textContent = myEmail;
+    chatMessagesContent.style.borderTop = 'solid 1px #c4c0c0';
+    chatMessagesContent.style.borderBottom = 'none';
 
     showFriendList(token);
 });
@@ -449,9 +469,14 @@ async function checkFriend(token) {
         addFriendCheck.innerHTML = '';
 
         if (response.status === 200) {
-            friendData.forEach(({ email, name, icon }) => {
+            // friendData.forEach(({ email, name, icon }) => {
+            friendData.forEach(({ email, name, icon }, index) => {
                 let friendList = document.createElement('div');
                 friendList.className = 'addFriend-list';
+
+                // 幫每個邀請設置一個不重複的ID，在接受後刪除才能精準處理
+                const friendIdCheck = `id${index + 1}`;
+                friendList.setAttribute('friendIdCheck', friendIdCheck);
 
                 let friendIcon = document.createElement('div');
                 friendIcon.className = 'showFriendIcon';
@@ -464,13 +489,13 @@ async function checkFriend(token) {
                 let friendAgree = document.createElement('div');
                 friendAgree.className = 'friendAgree';
                 friendAgree.addEventListener('click', () => {
-                    friendAnswerApi(name, 'O');
+                    friendAnswerApi(email, 'O', name , friendIdCheck);
                 });
             
                 let friendRefuse = document.createElement('div');
                 friendRefuse.className = 'friendRefuse';
                 friendRefuse.addEventListener('click', () => {
-                    friendAnswerApi(name, 'X');
+                    friendAnswerApi(email, 'X', name , friendIdCheck);
                 });
             
                 friendList.appendChild(friendIcon);                
@@ -488,7 +513,7 @@ async function checkFriend(token) {
 };
 
 // 處理好友申請（接受或拒絕）
-async function friendAnswerApi(email, status) {
+async function friendAnswerApi(email, status, name, friendIdCheck) {
     try {
         let response = await fetch('/api/addFriend', {
             method: 'PUT',
@@ -503,13 +528,14 @@ async function friendAnswerApi(email, status) {
         console.log(data);
 
         if (response.status === 200) {
-            // 將對應的好友申請從頁面上清除
-            let friendListItems = document.querySelectorAll('.addFriend-list div');
+            const friendListItems = document.querySelectorAll('.addFriend-list');
 
             friendListItems.forEach(item => {
-                if (item.textContent.includes(email)) {
-                    item.parentNode.remove();
-                };
+                const idCheck = item.getAttribute('friendIdCheck');
+                
+                if (idCheck && idCheck === friendIdCheck) {
+                    item.closest('.addFriend-list').remove();
+                }
             });
         } else {
             console.error(data.error);
@@ -689,7 +715,7 @@ function showTalkPage(name, icon, roomId, friendId) {
     chatInputContainer.appendChild(chatInputDiv);
 
 
-    const chatInput = document.createElement('textarea');
+    const chatInput = document.createElement('input');
     chatInput.type = 'text';
     chatInput.className = 'chat-input';
     chatInput.placeholder = '輸入訊息';
@@ -752,6 +778,8 @@ async function getHistoryMessage(token, roomId) {
 
 function createMessageElement(sender_id, receiver_id, message, time, icon) {
     chatIndex.style.display = 'none';
+    chatMessagesContent.style.borderTop = 'solid 1px #c4c0c0';
+    chatMessagesContent.style.borderBottom = 'solid 1px #c4c0c0';
     const messageContainer = document.createElement('div');
     const textMessage = document.createElement('div');
     const textTime = document.createElement('div');

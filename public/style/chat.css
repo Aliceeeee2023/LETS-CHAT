@@ -47,8 +47,10 @@
 /* 共用 CSS */
 .chat-header, .chat-message, .chat-footer {
     display: flex;
-    border-bottom: 1px solid #c4c0c0;
     box-sizing: border-box;
+}
+.chat-footer {
+    border-bottom: 1px solid #c4c0c0;  
 }
 .chat-footer_bar {
     display: flex;
@@ -66,13 +68,17 @@
 }
 .chat-messages_list {
     width: 280px;
+    border-top: 1px solid #c4c0c0;  
+    border-bottom: 1px solid #c4c0c0;  
     border-right: 1px solid #c4c0c0;
     box-sizing: border-box;
 }
 .chat-messages_content {
     flex: 1;
-    padding: 5px;
+    /* padding: 5px; */
     box-sizing: border-box;
+    border-top: 1px #c4c0c0;  
+    border-bottom: 1px #c4c0c0;  
 }
 .chat-header_partner, .chatHeaderSetting {
     flex: 1;
@@ -211,8 +217,14 @@
     border: 1px solid #c4c0c0;
     cursor: pointer;
 }
+.ul {
+    max-height: 399px; /* 你希望的最大高度 */
+    overflow-y: auto;
+    padding: 5px 5px 0px 5px;
+    box-sizing: border-box;
+}
 /* 超過高度則出現卷軸 */
-.messagesList-check ,.friendList-check, .ul {
+.messagesList-check ,.friendList-check {
     max-height: 399px; /* 你希望的最大高度 */
     overflow-y: auto;
     padding: 5px;
@@ -305,7 +317,7 @@
 }
 .setting {
     display: flex;
-    margin: 20px 0px 0px 20px;
+    margin: 40px 0px 0px 40px;
 }
 .data-setting_name, .data-setting_email {
     display: flex;
@@ -333,19 +345,22 @@
 
 .chat-index {
     display: flex;
-    margin: 80px;
+    margin: 70px;
 }
 
 .chat-index_pic {
     justify-content: center; 
     align-items: center; 
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     background-image: url('../images/background.JPG');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     flex-direction: column;
+}
+.chat-index_word {
+    color: #535252;
 }
 
 .chat-index {
@@ -499,7 +514,6 @@
 }
 
 .ul {
-    max-height: 390px;
     width: 100%;
 }
 
@@ -570,3 +584,9 @@
     border-radius: 4px; /* 設定滾動條的邊緣為圓角 */
 }
   
+/* 各種通話窗口顯示 */
+.modal {
+    width: 150px;
+    height: 200px;
+    border-radius: 8px;
+}
