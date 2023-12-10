@@ -1050,7 +1050,7 @@ function formatNowDateTime(isoString) {
 //     return `${month}-${day} ${hours}:${minutes}`;
 // }
 
-function appendMessageToUI(message, sender_id, time) {
+function appendMessageToUI(message, sender_id, time, icon) {
 
     const messageContainer = document.createElement('div');
     const textMessage = document.createElement('div');
@@ -1078,6 +1078,10 @@ function appendMessageToUI(message, sender_id, time) {
     } else {
         messageContainer.className = 'messageContainerLeft';     
 
+        let messageIcon = document.createElement('div');
+        messageIcon.className = 'showFriendIcon';
+        messageIcon.style.backgroundImage = `url(${icon})`;
+
         if (isImageURL(message)) {
             // 如果是圖片網址，將圖片設為背景圖
             textMessage.className = 'chatImageLeft';
@@ -1087,6 +1091,7 @@ function appendMessageToUI(message, sender_id, time) {
             textMessage.textContent = message;
             textMessage.className = 'textMessageLeft'
         }
+        messageContainer.appendChild(messageIcon);     
         messageContainer.appendChild(textMessage);
         messageContainer.appendChild(textTime);
     }
@@ -1098,7 +1103,7 @@ function appendMessageToUI(message, sender_id, time) {
 
 
 
-function appendImageToUI(message, sendUserId, time) {
+function appendImageToUI(message, sendUserId, time, icon) {
     console.log(message, sendUserId, time);
     const messageContainer = document.createElement('div');
     const textMessage = document.createElement('div');
@@ -1126,6 +1131,10 @@ function appendImageToUI(message, sendUserId, time) {
     } else {
         messageContainer.className = 'messageContainerLeft';     
 
+        let messageIcon = document.createElement('div');
+        messageIcon.className = 'showFriendIcon';
+        messageIcon.style.backgroundImage = `url(${icon})`;
+
         if (isImageURL(message)) {
             // 如果是圖片網址，將圖片設為背景圖
             textMessage.className = 'chatImageLeft';
@@ -1135,6 +1144,7 @@ function appendImageToUI(message, sendUserId, time) {
             textMessage.textContent = message;
             textMessage.className = 'textMessageLeft'
         }
+        messageContainer.appendChild(messageIcon);     
         messageContainer.appendChild(textMessage);
         messageContainer.appendChild(textTime);
     }
@@ -1148,7 +1158,7 @@ socket.on('chat message', (data) => {
     
     // 在前端顯示消息
     if (room === currentRoomId) {
-        appendMessageToUI(message, currentUserId, time);
+        appendMessageToUI(message, currentUserId, time, currentFriendIcon);
         updateMessageList(room, message, time);
     }
 });
@@ -1196,7 +1206,7 @@ socket.on('chat image', (data) => {
     
     // 在前端顯示消息
     if (room === currentRoomId) {
-        appendImageToUI(fileURL, currentUserId, time);
+        appendImageToUI(fileURL, currentUserId, time, currentFriendIcon);
     }
 });
 
