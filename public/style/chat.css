@@ -558,6 +558,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-color: #d9d9d9;
+    margin-left: 10px;
 }
 .chatImageRight {
     width: 200px;

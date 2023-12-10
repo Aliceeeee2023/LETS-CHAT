@@ -49,6 +49,7 @@ app.use('/peerjs', peerServer);
 
 // 創建一個對象來存儲 currentUserId 與 socket.id 的映射
 const userSocketMap = {};
+const userPeerMap = {};
 
 io.on('connection', (socket) => {
     console.log('有用戶連接，Socket ID:', socket.id);
@@ -83,6 +84,7 @@ io.on('connection', (socket) => {
 		try {
             // 獲取當前時間
             const currentTime = new Date();
+            const currentSocketId = userSocketMap[currentUserId];
             const friendSocketId = userSocketMap[currentFriendId];
 
             // 将消息存储到 MySQL 数据库
@@ -91,6 +93,7 @@ io.on('connection', (socket) => {
             // 將接收到的消息發送給同房間的所有人
             io.to(room).emit('chat message', { room, message, currentUserId, time: currentTime});
 
+            io.to(currentSocketId).emit('update window', { room, message, currentUserId, time: currentTime}); 
             io.to(friendSocketId).emit('update window', { room, message, currentUserId, time: currentTime});            
         } catch (error) {
             console.error('錯誤：', error);
@@ -107,9 +110,14 @@ io.on('connection', (socket) => {
 		try {
             // 獲取當前時間
             const currentTime = new Date();
+            const currentSocketId = userSocketMap[currentUserId];
+            const friendSocketId = userSocketMap[currentFriendId];
 
             // 將接收到的消息發送給同房間的所有人
             io.to(room).emit('chat image', { room, fileURL, currentUserId, time: currentTime});
+
+            io.to(currentSocketId).emit('update window pic', { room, fileURL, currentUserId, time: currentTime}); 
+            io.to(friendSocketId).emit('update window pic', { room, fileURL, currentUserId, time: currentTime}); 
         } catch (error) {
             console.error('錯誤：', error);
 
@@ -152,25 +160,30 @@ io.on('connection', (socket) => {
         // 查找發起通話請求的朋友的 socket.id
         const callerSocketId = userSocketMap[callerId];
         const acceptSocketId = userSocketMap[acceptId];
-        console.log(callerSocketId, acceptSocketId)
+        const callerPeerId = userPeerMap[callerId];
+        const acceptPeerId = userPeerMap[acceptId];       
+        console.log(callerSocketId, acceptSocketId);
+        console.log('我是'+callerPeerId, acceptPeerId);
 
         // 如果發起通話請求的朋友在線上，回覆通話接受消息給他
         if (callerSocketId) {
             
             // 通知發起通話的使用者開始建立 WebRTC 連線
             // initiatorId 是用來表示 WebRTC 連接的發起方
-            io.to(callerSocketId).emit('start-webrtc-connection', { initiatorId: callerSocketId, acceptId: acceptSocketId, isCaller: true});
+            io.to(callerSocketId).emit('start-webrtc-connection', { initiatorId: callerSocketId, acceptId: acceptSocketId, isCaller: true, callerPeerId: callerPeerId, acceptPeerId: acceptPeerId});
 
             // 通知接受通話的使用者開始建立 WebRTC 連線
-            io.to(acceptSocketId).emit('start-webrtc-connection', { initiatorId: callerSocketId, acceptId: acceptSocketId, isCaller: false });
+            io.to(acceptSocketId).emit('start-webrtc-connection', { initiatorId: callerSocketId, acceptId: acceptSocketId, isCaller: false, callerPeerId: callerPeerId, acceptPeerId: acceptPeerId });
  
         }
     });
 
-    socket.on('hangup-call', async ({ callRequestId }) => {
-        if (callRequestId) {
-            io.to(callRequestId).emit('hangup-other-call');
-        }
+    socket.on('hangup-call', async ({ callRequestId, callAcceptId }) => {
+        // if (callRequestId) {
+        //     io.to(callRequestId).emit('hangup-other-call');
+        // }
+        io.to(callRequestId).emit('hangup-other-call');
+        io.to(callAcceptId).emit('hangup-other-call');
     });
 
     socket.on('cancel-call', async ({ currentFriendId }) => {
@@ -189,7 +202,14 @@ io.on('connection', (socket) => {
     });
 
 
+    // peer 相關
+    socket.on('peer-id', (data) => {
+        const peerId = data.peerId;
+        const currentUserId = data.currentUserId;
+        console.log('有用戶連接，Peer ID: ' + peerId);
 
+        userPeerMap[currentUserId] = peerId;
+    });
 
 
 
@@ -253,6 +273,7 @@ io.on('connection', (socket) => {
         const currentUserId = socket.currentUserId;
 
         delete userSocketMap[currentUserId];
+        delete userPeerMap[currentUserId];
     });
 });
 

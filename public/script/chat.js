@@ -944,6 +944,7 @@ async function getMessageList(token) {
 
         if (response.status === 200) {
             messageListCheck.innerHTML= '';
+            console.log('hi');
 
             messageList.forEach(({ friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime }) => {
                 createMessageList(friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime);
@@ -960,6 +961,7 @@ async function getMessageList(token) {
 // 建立聊天列表（確認中）
 function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime) {
     const formattedDateTime = formatNowDateTime(finalMessageTime);
+    console.log(finalMessage);
 
     let messageList = document.createElement('div');
     messageList.className = 'showMessageList';
@@ -1159,7 +1161,7 @@ socket.on('chat message', (data) => {
     // 在前端顯示消息
     if (room === currentRoomId) {
         appendMessageToUI(message, currentUserId, time, currentFriendIcon);
-        updateMessageList(room, message, time);
+        // updateMessageList(room, message, time);
     }
 });
 
@@ -1169,6 +1171,14 @@ socket.on('update window', (data) => {
     console.log('我是時間'+time);
     
     updateMessageList(room, message, time);
+});
+
+// 朋友視窗提升
+socket.on('update window pic', (data) => {
+    const { room, fileURL, currentUserId, time } = data;
+    console.log('我是時間'+time);
+    
+    updateMessageList(room, fileURL, time);
 });
 
 function updateMessageList(room, message, time) {
@@ -1207,6 +1217,7 @@ socket.on('chat image', (data) => {
     // 在前端顯示消息
     if (room === currentRoomId) {
         appendImageToUI(fileURL, currentUserId, time, currentFriendIcon);
+        // updateMessageList(room, message, time);
     }
 });
 
@@ -1230,6 +1241,9 @@ let currentCall;
 // 監聽 'open' 事件，當 Peer 建立成功時觸發（主要是拿peer id）（還不知道有甚麼用）
 peer.on('open', (id) => {
     console.log('My peer ID is: ' + id);
+
+    // 將 Peer ID 發送到伺服器
+    socket.emit('peer-id', { peerId: id, currentUserId: currentUserId  });
 });
 
 // 使用 Peer.js 进行 WebRTC 连接
@@ -1290,57 +1304,154 @@ acceptCallButton.addEventListener('click', async () => {
     }
 });
 
+// 監聽 'start-webrtc-connection' 事件（原本）
+// socket.on('start-webrtc-connection', (data) => {
+//     console.log('觸發');
+
+//     // 關閉等待對方接受的畫面
+//     closeCallRequestModal();
+//     // 先顯示正在通話的畫面
+//     // showCallInProgressModal();
+
+//     const { initiatorId, acceptId, isCaller, callerPeerId, acceptPeerId } = data;
+//     // 將 acceptId 賦值給全局變數
+//     callRequestId = initiatorId;
+//     callAcceptId = acceptId;
+
+//     if (isCaller) {
+//         // 在這裡處理發起通話者的資訊
+//         showCallInProgressModal(currentFriendName, currentFriendIcon);
+//     } else {
+//         // 在這裡處理接受通話者的資訊
+//         showCallInProgressModal(currentCallName, currentCallIcon);
+//     }
+
+//     // 在這裡觸發 WebRTC 連線的建立流程
+//     // 使用 initiatorId 和 acceptId 這兩個標識符
+
+//     // 假設你已經有 localAudio 和 remoteAudio 元素用於顯示音訊
+//     navigator.mediaDevices.getUserMedia({ audio: true })
+//         .then((stream) => {
+//             // 將本地音頻流設置到本地音頻元素
+//             localAudio.srcObject = stream;
+
+//             // 建立 Peer 對象
+//             const call = peer.call(acceptPeerId, stream);
+
+//             // 監聽 'stream' 事件
+//             call.on('stream', (remoteStream) => {
+//                 // 在這裡處理遠程音頻流，例如將其設置到 remoteAudio 元素
+//                 remoteAudio.srcObject = remoteStream;
+//             });
+//         })
+//         .catch((error) => {
+//             console.error('Error accessing local audio:', error);
+//         });
+
+// });
+
+let peerRequestId = null;
+let peerAcceptId = null;
+
+
 // 監聽 'start-webrtc-connection' 事件
 socket.on('start-webrtc-connection', (data) => {
     console.log('觸發');
 
     // 關閉等待對方接受的畫面
     closeCallRequestModal();
-    // 先顯示正在通話的畫面
-    // showCallInProgressModal();
 
-    const { initiatorId, acceptId, isCaller } = data;
+    const { initiatorId, acceptId, isCaller, callerPeerId, acceptPeerId } = data;
     // 將 acceptId 賦值給全局變數
     callRequestId = initiatorId;
     callAcceptId = acceptId;
+    peerRequestId = callerPeerId;
+    peerAcceptId = acceptPeerId;
 
     if (isCaller) {
         // 在這裡處理發起通話者的資訊
         showCallInProgressModal(currentFriendName, currentFriendIcon);
-    } else {
-        // 在這裡處理接受通話者的資訊
-        showCallInProgressModal(currentCallName, currentCallIcon);
-    }
 
-    // 在這裡觸發 WebRTC 連線的建立流程
-    // 使用 initiatorId 和 acceptId 這兩個標識符
+        // 在這裡觸發 WebRTC 連線的建立流程
+        // 使用 initiatorId 和 acceptId 這兩個標識符
 
-    // 假設你已經有 localAudio 和 remoteAudio 元素用於顯示音訊
-    navigator.mediaDevices.getUserMedia({ audio: true })
+        // 假設你已經有 localAudio 和 remoteAudio 元素用於顯示音訊
+        navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
             // 將本地音頻流設置到本地音頻元素
             localAudio.srcObject = stream;
+            localAudio.muted = true;
+
+            // 数据传输
+            const connection = peer.connect(acceptPeerId);
+            connection.on('open', () => {
+                connection.send('hi!');
+              });
 
             // 建立 Peer 對象
-            const call = peer.call(acceptId, stream);
+            const call = peer.call(acceptPeerId, stream);
 
             // 監聽 'stream' 事件
             call.on('stream', (remoteStream) => {
                 // 在這裡處理遠程音頻流，例如將其設置到 remoteAudio 元素
                 remoteAudio.srcObject = remoteStream;
             });
-        })
-        .catch((error) => {
-            console.error('Error accessing local audio:', error);
-        });
+    })
+    .catch((error) => {
+        console.error('Error accessing local audio:', error);
+    });
+    } else {
+        // 在這裡處理接受通話者的資訊
+        showCallInProgressModal(currentCallName, currentCallIcon);
+    }
+});
 
+// 確認是否 connect
+peer.on('connection', (connection) => {
+    connection.on('data', (data) => {
+      // Will print 'hi!'
+      console.log(data);
+    });
+    connection.on('open', () => {
+        connection.send('hello!');
+    });
+});
+
+
+// 全局監聽
+peer.on('call', (call) => {
+    // 獲取呼叫者的 Peer ID
+    const callerPeerId = call.peer;
+
+    if (callerPeerId === peerRequestId) {
+        // 获取本地的音频/视频流
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then((stream) => {
+                // 将本地流设置到本地音频/视频元素
+                localAudio.srcObject = stream;
+                localAudio.muted = true;
+
+                // answer 操作
+                return call.answer(stream);
+            })
+            .then(() => {
+                // answer 完成後，處理遠程流
+                call.on('stream', (remoteStream) => {
+                    // 在这里处理远程音频/视频流，例如将其设置到 remoteAudio/remoteVideo 元素
+                    remoteAudio.srcObject = remoteStream;
+                });
+            })
+            .catch((error) => {
+                console.error('Error accessing local media or answering the call:', error);
+            });
+    }
 });
 
 // 點擊挂断通话
 hangupButton.addEventListener('click', () => {
     // 向後端發送通知
     console.log('hihihi')
-    socket.emit('hangup-call', { callRequestId }); // 可以傳遞接受方的 ID，以便後端知道是哪一方發送的掛斷通話通知
+    socket.emit('hangup-call', { callRequestId, callAcceptId }); // 可以傳遞接受方的 ID，以便後端知道是哪一方發送的掛斷通話通知
 
     endcall();
 });
