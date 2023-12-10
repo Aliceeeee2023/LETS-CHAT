@@ -46,7 +46,8 @@ router.get('/api/showFriendList', authToken, async (req, res) => {
         SELECT DISTINCT users.id AS friendId, users.name, users.icon, fr.id
         FROM friend_requests AS fr
         JOIN users ON (LEAST(fr.sender_id, fr.receiver_id) = users.id OR GREATEST(fr.sender_id, fr.receiver_id) = users.id)
-        WHERE (fr.sender_id = ? OR fr.receiver_id = ?) AND fr.status = "已確認" AND users.email != ?;`;
+        WHERE (fr.sender_id = ? OR fr.receiver_id = ?) AND fr.status = "已確認" AND users.email != ?
+        ORDER BY users.name COLLATE utf8mb4_unicode_ci;`;
         const getFriendResult = await db.query(getFriendRequests, [req.id, req.id, req.email]);
 
         // 如果無資料表示未有好友
