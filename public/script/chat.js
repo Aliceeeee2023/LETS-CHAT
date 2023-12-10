@@ -633,8 +633,6 @@ function showTalkPage(name, icon, roomId, friendId) {
 
     const chatInputDiv = document.createElement('div');
     chatInputDiv.className = 'chat-footer_input';
-    
-
 
 
     // 新增左邊容器用於放置上傳圖片按鈕
@@ -727,6 +725,7 @@ function showTalkPage(name, icon, roomId, friendId) {
 
     const chatInput = document.createElement('input');
     chatInput.type = 'text';
+    chatInput.maxLength = 25;
     chatInput.className = 'chat-input';
     chatInput.placeholder = '輸入訊息';
 
@@ -770,13 +769,17 @@ async function getHistoryMessage(token, roomId) {
 
         let data = await response.json();
         let history = data.HistoryData;
-        console.log(history);
+        console.log('我是' +history);
 
         if (response.status === 200) {
             history.forEach(({ sender_id, receiver_id, message, time, icon }) => {
                 createMessageElement(sender_id, receiver_id, message, time, icon);
             });
 
+        } else if (data.error === '無歷史對話紀錄') {
+            chatIndex.style.display = 'none';
+            chatMessagesContent.style.borderTop = 'solid 1px #c4c0c0';
+            chatMessagesContent.style.borderBottom = 'solid 1px #c4c0c0';
         } else {
             console.error('錯誤：', data.error);
         };
@@ -794,7 +797,7 @@ function createMessageElement(sender_id, receiver_id, message, time, icon) {
     const textMessage = document.createElement('div');
     const textTime = document.createElement('div');
 
-    const formattedDateTime = formatDateTime(time);
+    const formattedDateTime = formatNowDateTime(time);
     textTime.textContent = formattedDateTime;
     textTime.className = 'textTime'
 
@@ -956,10 +959,11 @@ async function getMessageList(token) {
 
 // 建立聊天列表（確認中）
 function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime) {
-    const formattedDateTime = formatDateTime(finalMessageTime);
+    const formattedDateTime = formatNowDateTime(finalMessageTime);
 
     let messageList = document.createElement('div');
-    messageList.className = 'showMessageList'; 
+    messageList.className = 'showMessageList';
+    messageList.setAttribute('room', room_id);
 
     let messageIcon = document.createElement('div');
     messageIcon.className = 'showFriendIcon';
@@ -1020,15 +1024,31 @@ function formatNowDateTime(isoString) {
 }
 
 // 處理歷史訊息時間
-function formatDateTime(isoString) {
-    const date = new Date(isoString);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    let hours = (date.getHours() + 8) % 24;  // 加 8 小時並對 24 取餘數
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+// function formatDateTime(isoString) {
+//     const date = new Date(isoString);
+//     const month = (date.getMonth() + 1).toString().padStart(2, '0');
+//     const day = date.getDate().toString().padStart(2, '0');
+//     let hours = (date.getHours() + 8) % 24;  // 加 8 小時並對 24 取餘數
+//     const minutes = date.getMinutes().toString().padStart(2, '0');
 
-    return `${month}-${day} ${hours}:${minutes}`;
-}
+//     return `${month}-${day} ${hours}:${minutes}`;
+// }
+
+// function formatDateTime(isoString) {
+//     const date = new Date(isoString);
+//     const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+//     const day = date.getUTCDate().toString().padStart(2, '0');
+//     let hours = (date.getUTCHours() + 8) % 24;  // 加 8 小時並對 24 取餘數
+//     const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+
+//     // 如果加 8 小时后小时大于等于 24，减去 24 小时
+//     if (hours >= 24) {
+//         hours -= 24;
+//         date.setUTCDate(date.getUTCDate() + 1);
+//     }
+
+//     return `${month}-${day} ${hours}:${minutes}`;
+// }
 
 function appendMessageToUI(message, sender_id, time) {
 
@@ -1129,9 +1149,47 @@ socket.on('chat message', (data) => {
     // 在前端顯示消息
     if (room === currentRoomId) {
         appendMessageToUI(message, currentUserId, time);
+        updateMessageList(room, message, time);
     }
 });
 
+// 朋友視窗提升
+socket.on('update window', (data) => {
+    const { room, message, currentUserId, time } = data;
+    console.log('我是時間'+time);
+    
+    updateMessageList(room, message, time);
+});
+
+function updateMessageList(room, message, time) {
+    const messageLists = document.querySelectorAll('.showMessageList');
+
+    messageLists.forEach((messageList) => {
+        const roomAttribute = messageList.getAttribute('room');
+        const roomAttributeAsNumber = parseInt(roomAttribute, 10);
+
+        if (roomAttributeAsNumber  === room) {
+            // 更新相应的时间和消息
+            const messageFriendTime = messageList.querySelector('.showFriendTime');
+            const messageFriendMessage = messageList.querySelector('.showFriendMessage');
+            console.log('hiiiiiii');
+
+            const formattedDateTime = formatNowDateTime(time);
+            messageFriendTime.textContent = formattedDateTime;
+            console.log(room, message, time);
+
+            if (isImageURL(message)) {
+                messageFriendMessage.textContent = '已傳送圖片';
+            } else {
+                messageFriendMessage.textContent = message;
+            }
+
+            // 移动到最上方
+            // messageListCheck.insertBefore(messageList, messageListCheck.firstChild);
+            messageListCheck.prepend(messageList);
+        }
+    });
+}
 
 socket.on('chat image', (data) => {
     const { room, fileURL, currentUserId, time } = data;

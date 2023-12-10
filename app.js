@@ -83,12 +83,15 @@ io.on('connection', (socket) => {
 		try {
             // 獲取當前時間
             const currentTime = new Date();
+            const friendSocketId = userSocketMap[currentFriendId];
 
             // 将消息存储到 MySQL 数据库
-            await saveMessageToDatabase(room, currentUserId, currentFriendId , message);
+            await saveMessageToDatabase(room, currentUserId, currentFriendId , message, currentTime);
 
             // 將接收到的消息發送給同房間的所有人
             io.to(room).emit('chat message', { room, message, currentUserId, time: currentTime});
+
+            io.to(friendSocketId).emit('update window', { room, message, currentUserId, time: currentTime});            
         } catch (error) {
             console.error('錯誤：', error);
 
@@ -375,9 +378,9 @@ AWS.config.update({
 });
 
 // 將訊息存到資料庫
-async function saveMessageToDatabase(room, currentUserId, currentFriendId, message) {
-		const query = 'INSERT INTO messages (room, sender_id, receiver_id, message) VALUES (?, ?, ?, ?)';
-		const getFriendResult = await db.query(query, [room, currentUserId, currentFriendId, message]);
+async function saveMessageToDatabase(room, currentUserId, currentFriendId, message, currentTime) {
+		const query = 'INSERT INTO messages (room, sender_id, receiver_id, message, time) VALUES (?, ?, ?, ?, ?)';
+		const getFriendResult = await db.query(query, [room, currentUserId, currentFriendId, message, currentTime]);
 }
 
 // 取出來電朋友的資料

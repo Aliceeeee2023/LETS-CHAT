@@ -499,6 +499,7 @@
     display: flex;
     margin-bottom: 10px;
     padding: 5px;
+    overflow-wrap: break-word;
 }
 
 .messageContainerRight {
@@ -539,6 +540,7 @@
     padding: 5px 12px 5px 12px;
     height: 29px;
     line-height: 29px;
+    overflow-wrap: break-word;
 }
 .textMessageRight {
     background-color: rgb(181, 217, 247);
