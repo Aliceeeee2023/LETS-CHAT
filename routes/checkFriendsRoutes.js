@@ -83,31 +83,6 @@ function authToken(req, res, next) {
     });
 };
 
-// 產生房間號------------
-// router.get('/api/friendRoom', authToken, async (req, res) => {
-//     try {
-//         // 排除申請＆接收重複的情況，且排除取到自己的 Email
-//         const getFriendRequests = `
-//         SELECT DISTINCT users.email
-//         FROM friend_requests AS fr
-//         JOIN users ON (LEAST(fr.sender_id, fr.receiver_id) = users.id OR GREATEST(fr.sender_id, fr.receiver_id) = users.id)
-//         WHERE (fr.sender_id = ? OR fr.receiver_id = ?) AND fr.status = "已確認" AND users.email != ?;`;
-//         const getFriendResult = await db.query(getFriendRequests, [req.id, req.id, req.email]);
-
-//         // 如果無資料表示未有好友
-//         if (getFriendResult[0].length === 0) {
-//             return res.status(400).json({ error: '無好友申請' });
-//         };
-
-//         // 回傳好友明細
-//         let friendEmails = getFriendResult[0].map(entry => entry.email);
-//         return res.status(200).json({ friendEmails });
-//     } catch (error) {
-//         console.error('錯誤：', error);
-//         return res.status(500).json({ error: '伺服器內部錯誤' });
-//     };
-// });
-
 // 取得對話中的歷史訊息
 router.post('/api/getHistoryMessage', authToken, async (req, res) => {
     let { roomId } = req.body;

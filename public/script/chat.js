@@ -1,77 +1,8 @@
-
-
 // 取得網頁資料
-// const input = document.querySelector('.chat-input');
-// const button = document.querySelector('.chat-button');
 const chatMessagesContent = document.querySelector('.chat-messages_content');
 const ul = document.querySelector('.ul');
 
 const chatInputContainer = document.querySelector('.chat-input_container');  
-// 確認按鈕是否有提交（感覺要改成 AJAX）
-// button.addEventListener('click', e => {
-//     // 取消默認動作，防止按鈕點擊導致刷新頁面
-//     e.preventDefault();
-
-//     // 如果輸入框有內容則觸發 chat message 事件，並且填入輸入框的內容
-//     if(input.value) {
-//         socket.emit('chat message', input.value);
-//         input.value = ''; // 最後清空輸入框
-//     };
-// });
-
-// 監聽 chat message 事件（事件名稱自己取），所以可以同時監聽很多個事件
-// socket.on('chat message', msg => {
-//     const li = document.createElement('li');
-//     li.textContent = msg;
-
-//     ul.appendChild(li);
-// });
-
-// 聊天視窗測試（待確認）
-// Assume you already have the initialization code for Socket.IO
-// const socket = io('http://localhost:3000');
-
-// // Handle form submission for sending messages
-// document.getElementById('messageForm').addEventListener('submit', function(event) {
-//   event.preventDefault();
-//   const messageInput = document.getElementById('messageInput');
-//   const messageContent = messageInput.value.trim();
-
-//   if (messageContent !== '') {
-//     // Send the message to the server
-//     sendMessage(messageContent);
-//     messageInput.value = ''; // Clear the input field
-//   }
-// });
-
-// // Function to send a message
-// function sendMessage(content) {
-//   const data = {
-//     sender_id: 'user1', // Replace with the actual sender ID or username
-//     receiver_id: 'user2', // Replace with the actual receiver ID or username
-//     content: content,
-//   };
-//   socket.emit('message', data);
-// }
-
-// // Function to display a message in the UI
-// function displayMessage(message) {
-//   const messageDisplay = document.getElementById('messageDisplay');
-//   const messageElement = document.createElement('p');
-//   messageElement.textContent = `${message.sender_id}: ${message.content}`;
-//   messageDisplay.appendChild(messageElement);
-// }
-
-// // Listen for incoming messages
-// socket.on('message', function(message) {
-//   displayMessage(message);
-// });
-
-// // Assume you have a mechanism to handle friend selection and retrieve friend's ID
-// const selectedFriendId = 'user2'; // Replace with the actual selected friend's ID
-
-// // Join the room associated with the selected friend
-// socket.emit('join', selectedFriendId);
 
 // 目前登錄的會員ID
 let currentUserId = null;
@@ -79,27 +10,9 @@ let currentUserId = null;
 // 進入頁面當下判斷是否有登入
 const token = localStorage.getItem('token');
 
-
-
-
-
 // 建立與 Socket.IO 的連線
 // io() 中寫的是 Socket.IO 連線的伺服器端點
 const socket = io();
-
-// 直接在连接时发送 currentUserId
-// socket.emit('set-current-user', { currentUserId });
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     document.body.style.display = 'none';
-//     checkUsers(token);
-//     showFriendList(token);
-// });
-
-// socket.on('connect', () => {
-//     console.log(currentUserId);
-//     socket.emit('set-current-user', { currentUserId });
-// });
 
 document.addEventListener('DOMContentLoaded', () => {
     document.body.style.display = 'none';
@@ -116,28 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showFriendList(token);
     });
 });
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     document.body.style.display = 'none';
-    
-//     // 调用异步函数，确保在连接时 currentUserId 已经设置
-//     setupSocketConnection();
-    
-//     showFriendList(token);
-// });
-
-// async function setupSocketConnection() {
-//     // 假设 checkUsers 是一个异步函数，等待 currentUserId 的设置
-//     console.log('Before checkUsers');
-//     await checkUsers(token);
-//     console.log(currentUserId);
-
-//     // 在连接时发送 currentUserId
-//     socket.on('connect', () => {
-//         console.log(currentUserId);
-//         socket.emit('set-current-user', { currentUserId });
-//     });
-// }
 
 let myName;
 let myEmail;
@@ -837,34 +728,6 @@ function createMessageElement(sender_id, receiver_id, message, time, icon) {
         messageContainer.appendChild(textTime);
     }
 
-    // if (isImageURL(message) && currentUserId === sender_id) {
-    //     // 如果是圖片網址，將圖片設為背景圖
-    //     textMessage.className = 'chatImage';
-    //     textMessage.style.backgroundImage = `url(${message})`;
-    // } else (isImageURL(message) && currentUserId !== sender_id) {
-    //     // 如果是文字訊息，則創建文字消息元素
-    //     textMessage.textContent = message;
-    // }
-
-    // // 如果 currentUserId 等于 sender_id，则是自己的消息
-    // if (currentUserId === sender_id) {
-    //     // 设置底色为淺綠色
-    //     textMessage.className = 'textMessageRight'
-    //     // 将消息容器放在右边
-    //     messageContainer.className = 'messageContainerRight';       
-
-    //     messageContainer.appendChild(textTime);
-    //     messageContainer.appendChild(textMessage);
-    // } else {
-    //     // 设置底色为灰色
-    //     textMessage.className = 'textMessageLeft'
-    //     // 将消息容器放在左边
-    //     messageContainer.className = 'messageContainerLeft';     
-
-    //     messageContainer.appendChild(textMessage);
-    //     messageContainer.appendChild(textTime); 
-    // }
-
     // 将文本消息添加到消息容器
     ul.appendChild(messageContainer);
 
@@ -877,55 +740,6 @@ function isImageURL(url) {
     // 這只是一個簡單的檢查，您可能需要一些更複雜的邏輯來確認 URL 是否是圖片 URL
     return /\.(jpeg|jpg|gif|png)$/i.test(url);
 }
-
-
-// 生成歷史訊息（確認中、原本）
-// function createMessageElement(sender_id, receiver_id, message, time) {
-
-//     chatIndex.style.display = 'none';
-//     const messageContainer = document.createElement('div');
-//     const textMessage = document.createElement('div');
-//     textMessage.textContent = message;
-
-//     // 添加适当的样式和边框
-//     textMessage.style.border = '1px solid #aaaaaa';
-//     textMessage.style.borderRadius = '10px';
-//     textMessage.style.padding = '7px';
-//     messageContainer.style.marginBottom = '5px'; // 调整此处的 margin
-//     messageContainer.style.padding = '5px'; // 调整此处的 padding
-
-//     // 如果 currentUserId 等于 sender_id，则是自己的消息
-//     if (currentUserId === sender_id) {
-//         // 设置底色为淺綠色
-//         textMessage.style.backgroundColor = '#c1ecc1';
-//         // 设置文本右对齐
-//         textMessage.style.textAlign = 'right';
-//         // 将消息容器放在右边
-//         messageContainer.style.marginLeft = 'auto';
-//         messageContainer.style.textAlign = 'right';
-//     } else {
-//         // 设置底色为灰色
-//         textMessage.style.backgroundColor = '#d9d9d9';
-//         // 设置文本左对齐
-//         textMessage.style.textAlign = 'left';
-//         // 将消息容器放在左边
-//         messageContainer.style.marginRight = 'auto';
-//         messageContainer.style.textAlign = 'left';
-//     }
-
-//     // 使边框包裹文字
-//     textMessage.style.display = 'inline-block';
-
-//     // 将文本消息添加到消息容器
-//     messageContainer.appendChild(textMessage);
-//     ul.appendChild(messageContainer);
-
-//     // 滚动到底部
-//     ul.scrollTop = ul.scrollHeight;
-// }
-
-
-
 
 // 顯示聊天列表（處理中）
 async function getMessageList(token) {

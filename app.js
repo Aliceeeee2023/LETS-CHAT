@@ -53,9 +53,6 @@ const userPeerMap = {};
 
 io.on('connection', (socket) => {
     console.log('有用戶連接，Socket ID:', socket.id);
-    // const currentUserId = socket.handshake.query.currentUserId;
-    // userSocketMap[currentUserId] = socket.id;
-    // console.log('用戶', currentUserId, '已連接');
 
     // 先從前端取得ID
     socket.on('set-current-user', (data) => {
@@ -72,9 +69,6 @@ io.on('connection', (socket) => {
         socket.join(room);
         console.log(`用戶 ${socket.id} 加入房間：${room}`);
 
-        // // 11/28新增★★★
-        // roomToSocketMap[room] = roomToSocketMap[room] || [];
-        // roomToSocketMap[room].push(socket.id);
     });
 
     socket.on('chat message', async (data) => {
@@ -152,7 +146,6 @@ io.on('connection', (socket) => {
     });
 
     // 等待確認中
-    // 等待確認中
     socket.on('accept-call', async ({ acceptId, callerId }) => {
         // 處理接受通話的邏輯
         console.log(`${socket.id} accepted the call from ${callerId}`);
@@ -201,7 +194,6 @@ io.on('connection', (socket) => {
         }
     });
 
-
     // peer 相關
     socket.on('peer-id', (data) => {
         const peerId = data.peerId;
@@ -210,60 +202,6 @@ io.on('connection', (socket) => {
 
         userPeerMap[currentUserId] = peerId;
     });
-
-
-
-    // socket.on('call-request', (data) => {
-    //     const { room, peerId } = data;
-    //     console.log(`用戶 ${socket.id} 在房間 ${room} 發起通話請求給 ${peerId}`);
-
-    //     // 向房间中的其他用户发出通话请求
-    //     socket.to(room).emit('call-request', { peerId });
-    // });
-
-    // socket.on('call-response', (data) => {
-    //     const { peerId, isAccepted } = data;
-    
-    //     if (isAccepted) {
-    //         // 对方接受通话
-    //         // 发送通话已接受的消息给对方，告知开始建立 WebRTC 连接
-    //         socket.to(peerId).emit('call-accepted', { peerId: socket.id });
-    //     } else {
-    //         // 对方拒绝通话
-    //         // 可以在这里处理拒绝通话的逻辑
-    //     }
-    // });
-    
-    // // 处理对方已接受通话的事件
-    // socket.on('call-accepted', (data) => {
-    //     const { peerId } = data;
-    
-    //     // 在这里可以进行 WebRTC 连接的建立，例如通过 Peer.js
-    //     // ...
-    // });
-
-    // // 發起語音呼叫
-    // // friendPeerId 為朋友的 peer ID
-    // socket.on('call friend', (friendPeerId) => {
-    //     // 使用Peer.js 向朋友（peer ID）發起呼叫
-    //     // call 方法表示發起通話，friendPeerId 代表要通話的朋友 ID，null 表示僅傳輸聲音
-    //     const call = peer.call(friendPeerId, null);
-    //     // 如果要傳輸影像，則需要用 const call = peer.call(friendPeerId, yourMediaStream);
-
-    //     call.on('stream', (friendStream) => {
-    //         // 將朋友的音頻流發送給原始呼叫方
-    //         io.to(socket.id).emit('friend stream', friendStream);
-    //     });
-    // });
-
-    // // 發起結束通話的事件
-    // socket.on('end call', () => {
-    //     // 可在此處添加處理結束通話的邏輯
-    //     // 例如：關閉音訊/視訊流、結束 Peer.js 通話等
-    
-    //     // 通知所有用戶結束通話
-    //     io.emit('end call');
-    // });
 
     socket.on('disconnect', () => {
         console.log('用戶斷開連接:', socket.id);
@@ -276,110 +214,6 @@ io.on('connection', (socket) => {
         delete userPeerMap[currentUserId];
     });
 });
-
-
-
-// 關於ID比對
-// io.on('connection', (socket) => {
-//     // 當有新連接時，建立一個用戶 ID 並與套接字關聯
-//     const userId = generateUniqueId(); // 假設有一個生成唯一 ID 的函數
-//     socket.userId = userId;
-
-//     // 將新用戶添加到用戶數據庫
-//     users[userId] = { socket: socket, /* 其他用戶信息 */ };
-
-//     // 發送用戶 ID 到前端
-//     socket.emit('user-id', { userId });
-
-//     // 其他後端邏輯...
-
-//     // 在套接字斷開連接時的處理
-//     socket.on('disconnect', () => {
-//         console.log('用戶斷開連接:', socket.userId);
-//         // 從用戶數據庫中刪除斷開連接的用戶
-//         delete users[socket.userId];
-//     });
-
-//     // 處理通話請求
-//     socket.on('call-request', ({ currentFriendId }) => {
-//         // 確保 currentFriendId 是有效的用戶 ID
-//         if (users[currentFriendId]) {
-//             // 在這裡處理通話請求，通知朋友
-//             users[currentFriendId].socket.emit('incoming-call', { callerId: socket.userId });
-//         } else {
-//             console.error('無效的朋友 ID:', currentFriendId);
-//         }
-//     });
-// });
-
-// // 生成唯一 ID 的示例函數
-// function generateUniqueId() {
-//     // 實際應用中，可能使用更複雜的邏輯生成唯一 ID
-//     return Math.random().toString(36).substring(2, 15);
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 第二版本
-// io.on('connection', (socket) => {
-//     console.log(`User connected: ${socket.id}`);
-
-//     // 监听通话请求
-//     socket.on('call-request', (data) => {
-//         const { friendId } = data;
-//         console.log(`Incoming call request from ${socket.id} to ${friendId}`);
-
-//         // 向朋友发送通话请求
-//         io.to(friendId).emit('call-request');
-//     });
-
-//     // 监听通话取消
-//     socket.on('call-cancel', () => {
-//         console.log(`Call cancelled by ${socket.id}`);
-//         // 取消通话逻辑
-//         // ...
-//     });
-
-//     // 监听通话接受
-//     socket.on('call-accept', () => {
-//         console.log(`Call accepted by ${socket.id}`);
-//         // 通话接受逻辑
-//         // ...
-//     });
-
-//     // 监听通话拒绝
-//     socket.on('call-reject', () => {
-//         console.log(`Call rejected by ${socket.id}`);
-//         // 通话拒绝逻辑
-//         // ...
-//     });
-
-//     // 监听通话结束
-//     socket.on('call-end', () => {
-//         console.log(`Call ended by ${socket.id}`);
-//         // 通话结束逻辑
-//         // ...
-//     });
-
-//     socket.on('disconnect', () => {
-//         console.log('User disconnected');
-//         // 用户断开连接逻辑
-//         // ...
-//     });
-// });
-
 
 // S3相關（確認中）
 // 上傳檔案到 S3 的相關設置
