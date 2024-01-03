@@ -583,22 +583,6 @@ function showTalkPage(name, icon, roomId, friendId) {
                 } else {
                     console.log(data.error);
                 }
-
-
-
-
-                // 使用 FileReader 讀取圖片內容
-                // const reader = new FileReader();             
-
-                // reader.onload = (event) => {
-                //     const imageData = event.target.result;
-
-                //     // 使用 Socket.io 將圖片資料傳送到後端
-                //     socket.emit('send image', { room: roomId, currentUserId, currentFriendId, imageData, fileType: selectedFile.type });
-                // };
-
-                // // 讀取圖片內容（暫不需要）
-                // reader.readAsDataURL(selectedFile);
             } catch (error) {
                 console.error('錯誤：', error);
             }

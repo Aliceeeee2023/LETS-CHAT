@@ -19,9 +19,4 @@ router.get('/chat', (req, res) => {
     res.sendFile(path.join(__dirname, '../views/chat.html'));
 });
 
-// 測試聊天系統用
-router.get('/test', (req, res) => {
-    res.sendFile(path.join(__dirname, '../views/test.html'));
-});
-
 module.exports = router;

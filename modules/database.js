@@ -1,4 +1,4 @@
-// 載入資料庫相關模組（需要的時候才引入，主程式沒使用到便可以不引入）
+// 載入資料庫相關模組（需要的時候才引入，沒使用到便可以不引入）
 const mysql = require('mysql2/promise');
 
 // 創建 connectionPool，會自動管理資料庫連接
@@ -13,4 +13,5 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 
+// 把 db 這個變數匯出
 module.exports = db;

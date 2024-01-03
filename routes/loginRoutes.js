@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const rateLimit = require('express-rate-limit'); // 限制 API 請求頻率
-const db = require('./database.js');
+const db = require('../modules/database.js');
 const jwt = require('jsonwebtoken');
 
 // 限制每秒最多一個請求
