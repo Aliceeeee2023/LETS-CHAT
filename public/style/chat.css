@@ -1,97 +1,19 @@
-/* 聊天主視窗 CSS */
+/* 主視窗 + 共用 CSS */
 .chat-window {
     width: 870px;
     height: 510px;
     margin: 0 auto;
     margin-top: 120px;
     margin-bottom: 120px;
-    /* margin-bottom: 240px; */
     border-top: 1px solid #c4c0c0;
     border-left: 1px solid #c4c0c0;
     border-right: 1px solid #c4c0c0;
     border-radius: 8px;
     overflow: hidden;
 }
-
-
-
-.icon_friendList, .icon_messagesList, .icon_addFriend, .icon_setting, .upload-button {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-.icon_friendList {
-    background-image: url('../images/03.JPG');
-}
-.icon_messagesList {
-    background-image: url('../images/01.JPG');
-}
-.icon_addFriend {
-    background-image: url('../images/02.JPG');
-}
-.icon_setting {
-    background-image: url('../images/04.png');
-}
-.upload-button {
-    /* border-right: 1px solid #8d8c8c; */
-    background-image: url('../images/pic-icon.png');
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    margin: 0px 5px 0px 10px;
-}
-
-
-
-
-/* 共用 CSS */
 .chat-header, .chat-message, .chat-footer {
     display: flex;
     box-sizing: border-box;
-}
-.chat-footer {
-    border-bottom: 1px solid #c4c0c0;  
-}
-.chat-footer_bar {
-    display: flex;
-    width: 280px;
-    /* padding: 0px 10px 0px 10px; */
-    border-right: 1px solid #c4c0c0;
-    box-sizing: border-box;
-}
-.chat-header_user {
-    display: flex;
-    border-right: 1px solid #c4c0c0;
-    width: 280px;
-    padding: 10px 10px 10px 15px;
-    box-sizing: border-box;
-}
-.chat-messages_list {
-    width: 280px;
-    border-top: 1px solid #c4c0c0;  
-    border-bottom: 1px solid #c4c0c0;  
-    border-right: 1px solid #c4c0c0;
-    box-sizing: border-box;
-}
-.chat-messages_content {
-    flex: 1;
-    /* padding: 5px; */
-    box-sizing: border-box;
-    border-top: 1px #c4c0c0;  
-    border-bottom: 1px #c4c0c0;  
-}
-.chat-header_partner, .chatHeaderSetting {
-    flex: 1;
-    padding: 10px 10px 10px 15px;
-    box-sizing: border-box;
-    font-size: 18px;
-    font-weight: 500;
-    color: #4b4848;
-}
-.chat-footer_input {
-    flex: 1;
-    box-sizing: border-box;
-    height: 48px;
 }
 
 /* chat-header */
@@ -100,22 +22,131 @@
     background-color: rgb(255, 255, 255);
     align-items: center;
 }
+.chat-header_user, .chat-header_partner {
+    display: flex;
+    align-items: center;
+}
+.chat-header_user {
+    display: flex;
+    border-right: 1px solid #c4c0c0;
+    width: 280px;
+    padding: 10px 10px 10px 15px;
+    box-sizing: border-box;
+}
+.chat-header_partner {
+    flex: 1;
+    padding: 10px 10px 10px 15px;
+    box-sizing: border-box;
+    font-size: 18px;
+    font-weight: 500;
+    color: #4b4848;
+}
+.chat-header_icon, .chat-partner_icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.chat-header_name, .chat-partner_name {
+    margin-left: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #4b4848;
+}
+.callButton {
+    display: none;
+    cursor: pointer;
+    background-image: url('../images/phone2.png');
+    width: 50px;
+    height: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-right: 5px;
+}
 
-/* chat-message */
+/* chat-message、chat-messages_list */
 .chat-message {
     height: 400px;
 }
-.chat-messagesList, .chat-addFriend {
+.chat-messages_list {
+    width: 280px;
+    border-top: 1px solid #c4c0c0;  
+    border-bottom: 1px solid #c4c0c0;  
+    border-right: 1px solid #c4c0c0;
+    box-sizing: border-box;
+}
+.chat-messagesList {
     display: none;
     max-height: 399px;
 }
+.messagesList-check, .friendList-check {
+    max-height: 399px;
+    overflow-y: auto;
+    padding: 5px;
+    box-sizing: border-box;
+}
+.showMessageList:hover, .showFriendList:hover, .addFriend-list:hover {
+    background-color: #f0f0f0;
+}
+.showMessageList, .showFriendList {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    box-sizing: border-box;
+}
+.showMessageList {
+    padding: 10px;
+}
+.showFriendList {
+    padding-left: 10px;
+}
+.showFriendIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.showFriendName {
+    margin-left: 10px;
+    font-size: 16px;
+}
+.showData {
+    margin-left: 10px; 
+    width: 190px;   
+}
+.showData_container {
+    display: flex;
+    align-items: center;
+}
+.showFriendTime {
+    font-size: 12px;
+    line-height: 16px;
+    margin-left: auto;
+}
+.showFriendMessage {
+    width: 182px;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* chat-addFriend */
 .chat-addFriend {
     overflow: auto;
+    display: none;
+    max-height: 399px;
 }
 .addFriend-search {
     padding: 15px;
     display: flex;
-    align-items: center; /* 垂直置中 */
+    align-items: center;
 }
 .friend_input {
     width: 190px;
@@ -126,16 +157,13 @@
 .addFriend-button {
     height: 40px;
     width: 40px;
-    /* display: inline; */
     box-sizing: border-box;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     background-image: url('../images/search-icon2.png');
-    /* padding: 5px; */
-    /* display: inline-block; */
     cursor: pointer;
-    margin-left: 7px; /* 調整按鈕與輸入框之間的距離 */
+    margin-left: 7px;
 }
 .addFriend-result {
     padding-left: 15px;
@@ -150,14 +178,16 @@
     font-weight: 700;
     color: #575454;
 }
-.showFriendList, .showMessageList {
-    cursor: pointer;
+.addFriend-check {
+    padding: 5px;
 }
-.showFriendList:hover, .showMessageList:hover, .addFriend-list:hover {
-    background-color: #f0f0f0;
+.addFriend-list {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding-left: 10px;
+    box-sizing: border-box;
 }
-
-
 .friendName {
     margin-left: 10px;
 }
@@ -171,7 +201,6 @@
     cursor: pointer;
 }
 .friendAgree {
-    /* margin-left: 20px; */
     background-image: url('../images/accept-icon.png');
     margin-left: auto;
 }
@@ -179,175 +208,21 @@
     background-image: url('../images/reject-icon.png');
     margin-right: 10px;
 }
-.addFriend-check {
-    padding: 5px;
-    /* overflow: auto; */
-    /* overflow-y: auto;
-    overflow: hidden; */
-    /* max-height: 270px; */
-}
 
-
-.showFriendList {
-    display: flex;
-    align-items: center;
-    height: 60px;
-    padding-left: 10px;
-    box-sizing: border-box;
-}
-.addFriend-list {
-    display: flex;
-    align-items: center;
-    height: 60px;
-    padding-left: 10px;
-    box-sizing: border-box;
-}
-.showMessageList {
-    display: flex;
-    align-items: center;
-    height: 60px;
-    padding: 10px;
-    box-sizing: border-box;
-}
-.addFriend-status {
-    width: 30px;
-    line-height: 30px;
-    text-align: center;
-    margin-left:15px;
-    border: 1px solid #c4c0c0;
-    cursor: pointer;
-}
-.ul {
-    max-height: 399px; /* 你希望的最大高度 */
-    overflow-y: auto;
-    padding: 5px 5px 0px 5px;
-    box-sizing: border-box;
-}
-/* 超過高度則出現卷軸 */
-.messagesList-check ,.friendList-check {
-    max-height: 399px; /* 你希望的最大高度 */
-    overflow-y: auto;
-    padding: 5px;
-    box-sizing: border-box;
-}
-
-/* chat-footer */
-.chat-footer {
-    height: 50px;
-}
-.chat-footer_bar {
-    display: flex;
-}
-.icon_messagesList, .icon_friendList, .icon_addFriend, .icon_setting {
+/* chat-messages_content */
+.chat-messages_content {
     flex: 1;
-    /* margin: 0px 5px 0px 5px;
-    padding: 0px 5px 0px 5px; */
-    text-align: center;
-    color: #575454;
-    /* border: 1px solid #8d8c8c; */
-    cursor: pointer;
-}
-.chat-input_container {
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-.chat-input {
-    width: 100%;
-    height: 48px;
-    border: none;
     box-sizing: border-box;
-    font-size: 16px;
-    font-family: "Noto Sans TC";
-    padding: 10px;
-    align-items: center;
+    border-top: 1px #c4c0c0;  
+    border-bottom: 1px #c4c0c0;  
 }
-.chat-button {
-    height: 48px;
-    width: 48px;
-    /* display: inline; */
-    box-sizing: border-box;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-image: url('../images/send-icon.png');
-    /* padding: 5px; */
-    /* display: inline-block; */
-    cursor: pointer;
-    /* margin-left: 7px; */
-    margin: 0px 5px 0px 5px;
-}
-
-
-
-/* 測試中 */
-.modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border: 1px solid #c4c0c0;
-    z-index: 1000;
-}
-
-.modal-content {
-    text-align: center;
-}
-
-/* Add a background overlay */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-}
-
-
-
-/* 會員設定頁面 */
-.chat-messages_setting {
-    display:none;
-}
-.setting {
-    display: flex;
-    margin: 40px 0px 0px 40px;
-}
-.data-setting_name, .data-setting_email {
-    display: flex;
-}
-.setting-pic {
-    /* border-radius: 50%; 將元素設置為圓形 */
-    /* background-image: url('../images/test.jpg');
-    width: 150px;
-    height: 150px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    border: 1px solid #bdbdbd; */
-
-    position: relative; /* 將 setting-pic 設置為相對定位的容器 */
-    border-radius: 50%;
-    /* background-image: url('../images/test.jpg'); */
-    width: 150px;
-    height: 150px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    border: 1px solid #c4c0c0;
-}
-
 .chat-index {
     display: flex;
     margin: 70px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
-
 .chat-index_pic {
     justify-content: center; 
     align-items: center; 
@@ -362,19 +237,24 @@
 .chat-index_word {
     color: #535252;
 }
-
-.chat-index {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 水平置中 */
-    text-align: center;  /* 文字水平置中 */
+.chat-messages_setting {
+    display:none;
 }
-
+.setting {
+    display: flex;
+    margin: 40px 0px 0px 40px;
+}
+.setting-pic {
+    position: relative;
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 1px solid #c4c0c0;
+}
 .change-setting-pic {
-/* 
-    text-align: center; /* 使文字水平置中 */
-    /* line-height: 50px; /* 設置行高使文字垂直置中，請根據你的需要調整這個值 */
-    /* 其他樣式，如果需要的話 */
     background-image: url('../images/choose-pic2.png');
     border-radius: 50%;
     background-size: cover;
@@ -382,35 +262,37 @@
     background-position: center;
     width:20px;
     height: 20px;
-    position: absolute; /* 將 change-setting-pic 設置為絕對定位的元素 */
-    bottom: 0; /* 將元素定位在底部 */
-    right: 0; /* 將元素定位在右側 */
-    background-color: rgba(255, 255, 255, 0.8); /* 背景色，這樣文字可以更清晰地顯示在圖片上 */
-    padding: 5px; /* 添加一些內邊距，讓文字更易讀 */
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px;
     cursor: pointer;
-    border: 1px solid #c4c0c0; /* 可以根據需要添加樣式 */
+    border: 1px solid #c4c0c0;
 }
 .data-setting {
     flex: 1;
     padding: 20px 30px 0px 50px;
 }
+.data-setting_name, .data-setting_email {
+    display: flex;
+}
 .data-setting_email {
     margin-top: 10px;
+}
+.data-name, .data-email {
+    width: 43px;
 }
 .name-content, .email-content {
     margin-left: 30px;
     padding: 0px 5px 0px 5px; 
 }
-.data-name, .data-email {
-    width: 43px;
-}
-
-
-.data-name_change ,.data-email_change {
+.data-name_change, .data-email_change {
     margin-left: 15px;
     padding: 0px 5px 0px 5px; 
     height: 25px;
     width: 25px;
+    display: inline-block;
     box-sizing: border-box;
     background-size: cover;
     background-repeat: no-repeat;
@@ -419,122 +301,35 @@
     cursor: pointer;
 }
 
-
-.data-name_change ,.data-email_change {
-    display: inline-block;
-    cursor: pointer;
+/* 自動生成聊天訊息 */
+.ul {
+    width: 100%;
+    max-height: 399px;
+    overflow-y: auto;
+    padding: 5px 5px 0px 5px;
+    box-sizing: border-box;
 }
-
-/* 確認中 */
-.showFriendIcon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.showFriendName {
-    margin-left: 10px;
-    font-size: 16px;
-}
-
-
-.messageFriendName {
-
-}
-
-.showData {
-    margin-left: 10px; 
-    width: 190px;   
-}
-
-.showData_container {
+.messageContainerLeft, .messageContainerRight {
     display: flex;
-    align-items: center;
-}
-
-.showFriendTime {
-    font-size: 12px;
-    line-height: 16px;
     margin-left: auto;
-}
-
-.showFriendMessage {
-    width: 182px;
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-.chat-header_icon, .chat-partner_icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.chat-header_name, .chat-partner_name {
-    margin-left: 10px;
-    font-size: 18px;
-    font-weight: 700;
-    color: #4b4848;
-}
-
-.chat-header_title, .chat-header_user, .chat-header_partner {
-    display: flex;
-    align-items: center; /* 將子元素在垂直方向上置中對齊 */
-}
-
-
-
-
-
-.messageContainerRight, .messageContainerLeft {
-    display: flex;
     margin-bottom: 10px;
     padding: 5px;
     overflow-wrap: break-word;
 }
-
-.messageContainerRight {
-    margin-left: auto;
-    text-align: right;
-    justify-content: flex-end;
-}
-
 .messageContainerLeft {
-    margin-left: auto;
     text-align: left;
     justify-content: flex-start;
 }
-
-.ul {
-    width: 100%;
+.messageContainerRight {
+    text-align: right;
+    justify-content: flex-end;
 }
-
-
-
-.callButton {
-    display: none;
-    cursor: pointer;
-    /* border-right: 1px solid #8d8c8c; */
-    background-image: url('../images/phone2.png');
-    width: 50px;
-    height: 50px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin-right: 5px;
-    /* border-radius: 50%; */
+.textTime {
+    font-size: 12px;
+    align-self: flex-end;
+    margin: 0px 10px 3px 10px;
 }
-
-.chatImageLeft,.chatImageRight, .textMessageRight, .textMessageLeft {
+.textMessageLeft, .textMessageRight, .chatImageLeft,.chatImageRight {
     font-size: 16px;
     border-radius: 15px;
     padding: 5px 12px 5px 12px;
@@ -542,14 +337,14 @@
     line-height: 29px;
     overflow-wrap: break-word;
 }
-.textMessageRight {
-    background-color: rgb(181, 217, 247);
-    text-align: right;
-}
 .textMessageLeft {
     background-color: #d9d9d9;
     text-align: left;
     margin-left: 10px;
+}
+.textMessageRight {
+    background-color: rgb(181, 217, 247);
+    text-align: right;
 }
 .chatImageLeft {
     width: 200px;
@@ -569,31 +364,98 @@
     background-color: #c1ecc1;
 }
 
-
-
-
-.textTime {
-    font-size: 12px;
-    align-self: flex-end;
-    margin: 0px 10px 3px 10px;
+/* chat-footer */
+.chat-footer {
+    height: 50px;
+    border-bottom: 1px solid #c4c0c0;  
+}
+.chat-footer_bar {
+    display: flex;
+    width: 280px;
+    border-right: 1px solid #c4c0c0;
+    box-sizing: border-box;
+}
+.icon_friendList, .icon_messagesList, .icon_addFriend, .icon_setting {
+    flex: 1;
+    text-align: center;
+    color: #575454;
+    cursor: pointer;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.icon_friendList {
+    background-image: url('../images/03.JPG');
+}
+.icon_messagesList {
+    background-image: url('../images/01.JPG');
+}
+.icon_addFriend {
+    background-image: url('../images/02.JPG');
+}
+.icon_setting {
+    background-image: url('../images/04.png');
+}
+.chat-input_container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+.upload-button {
+    background-image: url('../images/pic-icon.png');
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    margin: 0px 5px 0px 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.chat-footer_input {
+    flex: 1;
+    box-sizing: border-box;
+    height: 48px;
+}
+.chat-input {
+    width: 100%;
+    height: 48px;
+    border: none;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-family: "Noto Sans TC";
+    padding: 10px;
+    align-items: center;
+}
+.chat-button {
+    height: 48px;
+    width: 48px;
+    box-sizing: border-box;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('../images/send-icon.png');
+    cursor: pointer;
+    margin: 0px 5px 0px 5px;
 }
 
-/* 設定卷軸寬度 */
-::-webkit-scrollbar {
-    width: 7px; /* 設定滾動條的寬度 */
-}
-::-webkit-scrollbar-thumb {
-    background-color: #888; /* 設定滾動條的顏色 */
-    border-radius: 4px; /* 設定滾動條的邊緣為圓角 */
-}
-  
 /* 各種通話窗口顯示 */
 .modal {
     width: 150px;
     height: 250px;
     border-radius: 8px;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #c4c0c0;
+    z-index: 1000;
 }
-
+.modal-content {
+    text-align: center;
+}
 .callRequestIcon, .callResponseIcon, .callProgressIcon {
     border-radius: 50%;
     background-size: contain;
@@ -604,19 +466,16 @@
     cursor: pointer;
     margin: auto;
 }
-
 .callRequestName, .callResponseName, .callProgressName {
     font-size: 18px;
     font-weight: 500;
     color: #4b4848;
 }
-
 .callRequestStatus, .callResponseStatus, .callProgressStatus {
     font-size: 16px;
     color: #535252;
     margin-bottom: 40px;
 }
-
 .cancelCallButton, .rejectCallButton, .hangupButton {
     background-size: contain;
     background-repeat: no-repeat;
@@ -627,7 +486,6 @@
     cursor: pointer;
     margin: auto;
 }
-
 .responseButton {
     display: flex;
 }
@@ -640,4 +498,13 @@
     height: 70px;
     cursor: pointer;
     margin: auto;
+}
+
+/* 設定卷軸寬度 */
+::-webkit-scrollbar {
+    width: 7px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
 }
