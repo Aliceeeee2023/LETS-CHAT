@@ -1,6 +1,14 @@
 const signupButton = document.querySelector('.signup-button');
 const loginLinkSpan = document.querySelector('.login-link-span');
 const signupError = document.querySelector('.signup-error');
+const token = localStorage.getItem('token');
+
+// 進入頁面時重置錯誤訊息狀態
+document.addEventListener('DOMContentLoaded', () => {
+    signupError.style.display = 'none';
+    document.body.style.display = 'none';
+    checkUsers(token);
+});
 
 // 點擊後跳轉至登入頁面
 loginLinkSpan.addEventListener('click', () => {
@@ -17,21 +25,16 @@ function checkEmail(email) {
     return emailRegex.test(email);
 };
 
-// 驗證暱稱只能是中英文
-function checkNickname(name) {
-    const nicknameRegex = /^[\u4e00-\u9fa5a-zA-Z]+$/;
-    return nicknameRegex.test(name);
-}
-
 function checkPassword(password) {
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
     return passwordRegex.test(password);
 };
 
-// 進入頁面時重置錯誤訊息狀態
-document.addEventListener('DOMContentLoaded', () => {
-    signupError.style.display = 'none';
-});
+// 驗證暱稱只能是中英文
+function checkNickname(name) {
+    const nicknameRegex = /^[\u4e00-\u9fa5a-zA-Z]+$/;
+    return nicknameRegex.test(name);
+}
 
 // 將資料送至後端處理
 async function submitSignupForm() {
@@ -54,7 +57,7 @@ async function submitSignupForm() {
     } else if (!checkPassword(password)) {
         signupError.textContent = '無效的密碼格式';
     } else {
-        // 將表單資料清空
+        // 清空表單資料
         emailInput.value = '';
         nameInput.value = '';
         passwordInput.value = '';
@@ -65,7 +68,7 @@ async function submitSignupForm() {
                 headers: {'Content-Type': 'application/json',},
                 body: JSON.stringify({ email, name, password }), // 名稱作為屬性名，值作為相應屬性的值
             });
-    
+
             const data = await response.json();           
 
             if (response.status === 200) {
@@ -75,21 +78,12 @@ async function submitSignupForm() {
             } else if (response.status === 500) {
                 signupError.textContent = '註冊失敗，請聯繫客服';
             };
-
         } catch (error) {
             console.error('錯誤：', error);
             signupError.textContent = '註冊失敗，請聯繫客服';
         };
     };
 };
-
-// 進入頁面當下判斷是否有登入（跟 Login 判斷完全相同）
-const token = localStorage.getItem('token');
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.body.style.display = 'none';
-    checkUsers(token);
-});
 
 async function checkUsers(token) {
     try {
@@ -104,10 +98,10 @@ async function checkUsers(token) {
             window.location.href = '/chat';
         } else if (response.status === 400) {
             document.body.style.display = 'block';
-            console.error('未登入帳號');
+            // console.error('未登入帳號');
         } else {
             document.body.style.display = 'block';
-            console.error('伺服器內部錯誤');
+            // console.error('伺服器內部錯誤');
         };
     } catch (error) {
         console.error('錯誤：', error);

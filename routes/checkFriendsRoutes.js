@@ -47,13 +47,7 @@ router.get('/api/getMessageList', authToken, async (req, res) => {
         const getMessageList = 
         `WITH RankedMessages AS (
             SELECT
-                u.id,
-                u.icon,
-                u.name,
-                u.email,
-                m.room,
-                m.message,
-                m.time,
+                u.id, u.icon, u.name, u.email, m.room, m.message, m.time,
                 ROW_NUMBER() OVER (PARTITION BY CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END ORDER BY m.time DESC) AS rnk
             FROM messages m
             JOIN users u ON (m.sender_id = u.id AND m.receiver_id = ?) OR (m.receiver_id = u.id AND m.sender_id = ?)

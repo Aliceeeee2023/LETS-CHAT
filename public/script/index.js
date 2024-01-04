@@ -37,10 +37,10 @@ async function checkUsers(token) {
             document.body.style.display = 'block';
         } else if (response.status === 400) {
             document.body.style.display = 'block';
-            console.error('未登入帳號');
+            // console.error('未登入帳號');
         } else {
             document.body.style.display = 'block';
-            console.error('伺服器內部錯誤');
+            // console.error('伺服器內部錯誤');
         };
     } catch (error) {
         console.error('錯誤：', error);

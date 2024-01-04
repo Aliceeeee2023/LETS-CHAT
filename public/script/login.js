@@ -1,6 +1,19 @@
 const loginButton = document.querySelector('.login-button');
 const signupLinkSpan = document.querySelector('.signup-link-span');
 const loginError = document.querySelector('.login-error');
+const token = localStorage.getItem('token');
+let emailInput = document.querySelector('.login-email');
+let passwordInput = document.querySelector('.login-password');
+
+// 進入頁面時重置錯誤訊息狀態
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.style.display = 'none';
+    loginError.style.display = 'none';
+    checkUsers(token);
+
+    emailInput.value = 'test@gmail.com';
+    passwordInput.value = 'test1234';
+});
 
 // 點擊後跳轉至註冊頁面
 signupLinkSpan.addEventListener('click', () => {
@@ -10,14 +23,6 @@ signupLinkSpan.addEventListener('click', () => {
 loginButton.addEventListener('click', () => {
     submitloginForm();
 });
-
-// 進入頁面時重置錯誤訊息狀態
-document.addEventListener('DOMContentLoaded', () => {
-    loginError.style.display = 'none';
-});
-
-let emailInput = document.querySelector('.login-email');
-let passwordInput = document.querySelector('.login-password');
 
 // 將登入資料送至後端處理
 async function submitloginForm() {
@@ -36,7 +41,7 @@ async function submitloginForm() {
                 headers: {'Content-Type': 'application/json',},
                 body: JSON.stringify({ email, password }),
             });
-    
+
             const data = await response.json();           
 
             if (response.status === 200) {
@@ -56,24 +61,12 @@ async function submitloginForm() {
 
                 loginError.textContent = '登入失敗，請聯繫客服';
             };
-
         } catch (error) {
             console.error('錯誤：', error);
             loginError.textContent = '登入失敗，請聯繫客服';
         };
     };
 };
-
-// 進入頁面當下判斷是否有登入（跟 Signup 判斷完全相同）
-const token = localStorage.getItem('token');
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.body.style.display = 'none';
-    checkUsers(token);
-
-    emailInput.value = 'test@gmail.com';
-    passwordInput.value = 'test1234';
-});
 
 async function checkUsers(token) {
     try {
@@ -88,10 +81,10 @@ async function checkUsers(token) {
             window.location.href = '/chat';
         } else if (response.status === 400) {
             document.body.style.display = 'block';
-            console.error('未登入帳號');
+            // console.error('未登入帳號');
         } else {
             document.body.style.display = 'block';
-            console.error('伺服器內部錯誤');
+            // console.error('伺服器內部錯誤');
         };
     } catch (error) {
         console.error('錯誤：', error);
