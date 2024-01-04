@@ -15,6 +15,10 @@ function checkEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 };
+function checkPassword(password) {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
+    return passwordRegex.test(password);
+};
 
 // 驗證暱稱只能是中英文
 function checkNickname(name) {
@@ -22,12 +26,7 @@ function checkNickname(name) {
     return nicknameRegex.test(name);
 }
 
-function checkPassword(password) {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
-    return passwordRegex.test(password);
-};
-
-// 處理註冊請求（POST）
+// 處理註冊請求
 router.post('/api/signup', limiter, async (req, res) => {
     // 提取值後賦值給 email, password 兩個變數
     const { email, name, password } = req.body;

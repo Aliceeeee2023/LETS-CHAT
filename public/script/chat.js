@@ -729,7 +729,7 @@ function isImageURL(url) {
 async function getMessageList(token) {
     try {
         let response = await fetch('/api/getMessageList', {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -822,33 +822,6 @@ function formatNowDateTime(isoString) {
 
     return `${month}-${day} ${hours}:${minutes}`;
 }
-
-// 處理歷史訊息時間
-// function formatDateTime(isoString) {
-//     const date = new Date(isoString);
-//     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-//     const day = date.getDate().toString().padStart(2, '0');
-//     let hours = (date.getHours() + 8) % 24;  // 加 8 小時並對 24 取餘數
-//     const minutes = date.getMinutes().toString().padStart(2, '0');
-
-//     return `${month}-${day} ${hours}:${minutes}`;
-// }
-
-// function formatDateTime(isoString) {
-//     const date = new Date(isoString);
-//     const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-//     const day = date.getUTCDate().toString().padStart(2, '0');
-//     let hours = (date.getUTCHours() + 8) % 24;  // 加 8 小時並對 24 取餘數
-//     const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-
-//     // 如果加 8 小时后小时大于等于 24，减去 24 小时
-//     if (hours >= 24) {
-//         hours -= 24;
-//         date.setUTCDate(date.getUTCDate() + 1);
-//     }
-
-//     return `${month}-${day} ${hours}:${minutes}`;
-// }
 
 function appendMessageToUI(message, sender_id, time, icon) {
 

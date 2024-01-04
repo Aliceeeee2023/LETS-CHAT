@@ -3,6 +3,7 @@ const router = express.Router();
 const rateLimit = require('express-rate-limit');
 const db = require('../modules/database.js');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 // 限制每秒最多一個請求
 const limiter = rateLimit({
@@ -13,6 +14,28 @@ const limiter = rateLimit({
 
 // JWT 金鑰設置
 const jwtSecretKey = process.env.JWT_SECRET_KEY;
+
+// 上傳檔案到 S3 的相關設置
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
+const s3BucketName = process.env.AWS_S3_BUCKET_NAME;
+
+// 檔案上傳相關設定
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+
+// 設置 AWS SDK
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+});
+
+// 驗證暱稱只能是中英文
+function checkNickname(name) {
+    const nicknameRegex = /^[\u4e00-\u9fa5a-zA-Z]{2,10}$/;
+    return nicknameRegex.test(name);
+}
 
 // 添加好友邏輯
 router.post('/api/addFriend', authToken, async (req, res) => {
@@ -81,17 +104,11 @@ router.put('/api/addFriend', authToken, async (req, res) => {
     }
 });
 
-// 驗證暱稱只能是中英文
-function checkNickname(name) {
-    const nicknameRegex = /^[\u4e00-\u9fa5a-zA-Z]{2,10}$/;
-    return nicknameRegex.test(name);
-}
-
-// 更改姓名API
+// 更改姓名
 router.post('/api/changeName', authToken, async (req, res) => {
     let { newName } = req.body;
 
-    // 如果格式不符合中英，以及長度不符合要返回錯誤訊息
+    // 如果格式或長度不符則返回錯誤訊息
     if (!checkNickname(newName)) {
         return res.status(400).json({ error: '請勿輸入錯誤暱稱格式' });
     };
@@ -110,6 +127,80 @@ router.post('/api/changeName', authToken, async (req, res) => {
     };
 });
 
+// 上傳 ICON
+router.post('/api/changeMemberIcon', upload.single('file'),  authToken, async (req, res) => {
+    const file = req.file;
+    const key = 'uploads/' + Date.now() + '-' + file.originalname;
+  
+    if (!file) {
+        return res.status(400).json({ error: '無選擇圖片上傳' });
+    }
+
+    // 配置 S3 参数
+    const params = {
+        Bucket: s3BucketName,
+        Key: 'uploads/' + Date.now() + '-' + file.originalname,
+        Body: file.buffer,
+        ContentType: file.mimetype, // 根據檔案實際格式上傳
+    };
+  
+    // 先判斷圖片，無誤後再上傳到資料庫
+    s3.upload(params, async (err, data) => {
+        if (err) {
+            return res.status(400).json({ error: '上傳失敗' });
+        }
+
+        try {
+            const fileURL = 'https://d5ygihl98da69.cloudfront.net/uploads/' + path.basename(data.Location);
+            const changeIconQuery = 'UPDATE users SET icon = ? WHERE id = ?';
+            const changeIconResult = await db.query(changeIconQuery, [fileURL, req.id]);
+
+            return res.status(200).json({ message: fileURL });
+        } catch (error) {
+            console.error('錯誤：', error);
+            return res.status(500).json({ error: '資料庫錯誤' });
+        }
+    });
+});
+
+// 聊天窗口上傳圖片
+router.post('/api/addPicture', upload.single('file'),  authToken, async (req, res) => {
+    const file = req.file;
+    const roomID = req.body.roomID;
+    const senderID = req.body.senderID;
+    const receiverId = req.body.receiverID;   
+    const key = 'uploads/' + Date.now() + '-' + file.originalname;
+  
+    if (!file) {
+        return res.status(404).json({ error: '無選擇圖片上傳' });
+    }
+
+    // 配置 S3 参数
+    const params = {
+        Bucket: s3BucketName,
+        Key: 'uploads/' + Date.now() + '-' + file.originalname,
+        Body: file.buffer,
+        ContentType: file.mimetype, // 根據檔案實際格式上傳
+    };
+  
+    // 先判斷圖片，無誤後再上傳到資料庫
+    s3.upload(params, async (err, data) => {
+        if (err) {
+            return res.status(400).json({ error: '上傳失敗' });
+        }
+
+        try {
+            const fileURL = 'https://d5ygihl98da69.cloudfront.net/uploads/' + path.basename(data.Location);
+            const changeIconQuery = 'INSERT INTO messages (room, sender_id, receiver_id, message) VALUES (?, ?, ?, ?)';
+            const changeIconResult = await db.query(changeIconQuery, [roomID, senderID, receiverId, fileURL]);
+
+            return res.status(200).json({ message: fileURL });
+        } catch (error) {
+            console.error('錯誤：', error);
+            return res.status(500).json({ error: '資料庫錯誤' });
+        }
+    });
+});
 
 // 驗證 token（並取出登入的 id）
 function authToken(req, res, next) {
@@ -129,111 +220,5 @@ function authToken(req, res, next) {
         next();
     });
 };
-
-const path = require('path');
-
-// 上傳檔案到 S3 的相關設置
-const AWS = require('aws-sdk');
-const s3 = new AWS.S3();
-const s3BucketName = process.env.AWS_S3_BUCKET_NAME;
-
-// 檔案上傳相關設定
-const multer = require('multer');
-const upload = multer({ storage: multer.memoryStorage() });
-
-// 設置 AWS SDK
-AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION,
-});
-
-// 透過 POST 方法上傳ICON
-router.post('/api/changeMemberIcon', upload.single('file'),  authToken, async (req, res) => {
-    const file = req.file;
-    const key = 'uploads/' + Date.now() + '-' + file.originalname;
-  
-    if (!file) {
-        return res.status(404).json({ error: '404 NOT FOUND' });
-    }
-
-    // 配置 S3 参数
-    const params = {
-        Bucket: s3BucketName,
-        Key: 'uploads/' + Date.now() + '-' + file.originalname,
-        Body: file.buffer,
-        ContentType: file.mimetype, // 根據檔案實際格式上傳
-    };
-  
-    // 先判斷圖片，無誤後再上傳到資料庫
-    s3.upload(params, async (err, data) => {
-        if (err) {
-            console.error('上傳失敗：', err);
-            return res.status(500).json({ error: '上傳失敗' });
-        }
-
-        try {
-            const fileURL = 'https://d5ygihl98da69.cloudfront.net/uploads/' + path.basename(data.Location);
-            console.log('上傳成功：', fileURL);
-
-            const changeIconQuery = 'UPDATE users SET icon = ? WHERE id = ?';
-            // 更新資料庫
-            const changeIconResult = await db.query(changeIconQuery, [fileURL, req.id]);
-
-            return res.status(200).json({ message: fileURL });
-        } catch (error) {
-            console.error('錯誤：', error);
-            return res.status(500).json({ error: '資料庫錯誤' });
-        }
-    });
-});
-
-
-// 透過 POST 方法上傳圖片（聊天窗口上傳）
-router.post('/api/addPicture', upload.single('file'),  authToken, async (req, res) => {
-    const file = req.file;
-    const roomID = req.body.roomID;
-    const senderID = req.body.senderID;
-    const receiverId = req.body.receiverID;   
-    const key = 'uploads/' + Date.now() + '-' + file.originalname;
-  
-    if (!file) {
-        return res.status(404).json({ error: '404 NOT FOUND' });
-    }
-
-    // 配置 S3 参数
-    const params = {
-        Bucket: s3BucketName,
-        Key: 'uploads/' + Date.now() + '-' + file.originalname,
-        Body: file.buffer,
-        ContentType: file.mimetype, // 根據檔案實際格式上傳
-    };
-  
-    // 先判斷圖片，無誤後再上傳到資料庫
-    s3.upload(params, async (err, data) => {
-        if (err) {
-            console.error('上傳失敗：', err);
-            return res.status(500).json({ error: '上傳失敗' });
-        }
-
-        try {
-            const fileURL = 'https://d5ygihl98da69.cloudfront.net/uploads/' + path.basename(data.Location);
-            console.log('上傳成功：', fileURL);
-            console.log(receiverId);
-
-            const changeIconQuery = 'INSERT INTO messages (room, sender_id, receiver_id, message) VALUES (?, ?, ?, ?)';
-            // 更新資料庫
-            const changeIconResult = await db.query(changeIconQuery, [roomID, senderID, receiverId, fileURL]);
-
-            return res.status(200).json({ message: fileURL });
-        } catch (error) {
-            console.error('錯誤：', error);
-            return res.status(500).json({ error: '資料庫錯誤' });
-        }
-    });
-});
-
-
-
 
 module.exports = router;

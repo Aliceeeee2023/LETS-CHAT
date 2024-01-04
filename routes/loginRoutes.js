@@ -27,7 +27,6 @@ router.put('/api/login', limiter, async (req, res) => {
     try {
         const checkLoginData = 'SELECT id, email, password FROM users WHERE email = ?';
         const LoginResults = await db.query(checkLoginData, [email]);
-        console.log(LoginResults);
 
         // 透過資料長度判斷帳號是否已經註冊
         if (LoginResults[0].length === 0) {
