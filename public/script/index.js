@@ -11,7 +11,6 @@ logout.addEventListener('click', () => {
     window.location.reload();
 });
 
-// 進入頁面當下判斷是否有登入
 document.addEventListener('DOMContentLoaded', () => {
     document.body.style.display = 'none';
     

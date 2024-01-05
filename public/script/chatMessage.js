@@ -1,4 +1,3 @@
-// 處理即時訊息時間
 function formatNowDateTime(isoString) {
     const date = new Date(isoString);
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -9,12 +8,10 @@ function formatNowDateTime(isoString) {
     return `${month}-${day} ${hours}:${minutes}`;
 };
 
-// 判斷是否為圖片
 function isImageURL(url) {
     return /\.(jpeg|jpg|gif|png)$/i.test(url);
 };
 
-// 左側聊天列表資料 API
 async function getMessageList(token) {
     try {
         let response = await fetch('/api/getMessageList', {
@@ -42,7 +39,6 @@ async function getMessageList(token) {
     };
 };
 
-// 生成左側聊天列表
 function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime) {
     const formattedDateTime = formatNowDateTime(finalMessageTime);
 
@@ -79,7 +75,6 @@ function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMes
 
     messageList.addEventListener('click', () => {
         getHistoryMessage(token, room_id)
-        // 將好友加入 Socket.io room
         socket.emit('join room', { room: room_id });
         currentRoomId = room_id;
         currentFriendId = friend_id;
@@ -97,7 +92,6 @@ function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMes
     messageListCheck.appendChild(messageList);
 };
 
-// 建立右側主要聊天視窗
 function showTalkPage(name, icon, roomId, friendId) {
     currentFriendName = name;
     currentFriendIcon = icon;
@@ -108,48 +102,39 @@ function showTalkPage(name, icon, roomId, friendId) {
     chatPartnerName.textContent = name;
     callButton.style.display = 'block';
 
-    // 動態生成聊天輸入框和發送按鈕
     chatInputContainer.innerHTML = '';
     const chatInputDiv = document.createElement('div');
     chatInputDiv.className = 'chat-footer_input';
 
-    // 新增左邊容器用於放置上傳圖片按鈕
     const leftContainer = document.createElement('div');
     leftContainer.className = 'left-container';
 
-    // 創建上傳圖片按鈕
     const uploadButton = document.createElement('div');
     uploadButton.className = 'upload-button';
 
-    // 創建 file-input
     const fileChatInput = document.createElement('input');
     fileChatInput.type = 'file';
     fileChatInput.style.display = 'none';
 
-    // 添加事件監聽器，當選擇檔案時觸發
     fileChatInput.addEventListener('change', handleFileSelect);
 
-    // 選擇圖片按鈕點擊時觸發檔案選擇
     uploadButton.addEventListener('click', () => {
         fileChatInput.click();
     });
 
-    // 處理選擇檔案的函數
     async function handleFileSelect() {
         const selectedFile = fileChatInput.files[0];
-
-        // 限制可以上傳的檔案類型（先只能上傳圖片）
         const selectedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
         if (!selectedFileTypes.includes(selectedFile.type)) {
             alert('僅能選擇圖片檔');
-            return; // 中止後續的處理
+            return;
         } else {
             const formData = new FormData();
             formData.append('file', selectedFile);
-            formData.append('roomID', currentRoomId); // 添加 roomID
-            formData.append('senderID', currentUserId); // 添加 senderID
-            formData.append('receiverID', currentFriendId); // 添加 roomID
+            formData.append('roomID', currentRoomId);
+            formData.append('senderID', currentUserId);
+            formData.append('receiverID', currentFriendId);
 
             try {
                 const response = await fetch('/api/addPicture', {
@@ -173,11 +158,9 @@ function showTalkPage(name, icon, roomId, friendId) {
         };
     };
 
-    // 添加上傳圖片按鈕到左邊容器
     leftContainer.appendChild(uploadButton);
     leftContainer.appendChild(fileChatInput);
 
-    // 將 chatInputDiv 添加到 chatFooter
     chatInputContainer.appendChild(leftContainer);
     chatInputContainer.appendChild(chatInputDiv);
 
@@ -190,25 +173,20 @@ function showTalkPage(name, icon, roomId, friendId) {
     const sendButton = document.createElement('div');
     sendButton.className = 'chat-button';
 
-    // 將輸入框和按鈕添加到 chatInputDiv
     chatInputDiv.appendChild(chatInput);
 
-    // 將 chatInputDiv 添加到 chatFooter
     chatInputContainer.appendChild(chatInputDiv);
     chatInputContainer.appendChild(sendButton);
 
     sendButton.addEventListener('click', () => {
-        const message = chatInput.value.trim(); // 取得輸入框的值，並去除頭尾空格
+        const message = chatInput.value.trim();
         if (message !== '') {
-            // 將訊息傳送到後端
             socket.emit('chat message', { room: roomId, currentUserId, currentFriendId, message });
-            // 清空輸入框
             chatInput.value = '';
         };
     });
 };
 
-// 右側歷史訊息 API
 async function getHistoryMessage(token, roomId) {
     try {
         let response = await fetch('/api/getHistoryMessage', {
@@ -240,7 +218,6 @@ async function getHistoryMessage(token, roomId) {
     };
 };
 
-// 生成右側歷史訊息
 function createMessageElement(sender_id, receiver_id, message, time, icon) {
     chatIndex.style.display = 'none';
     chatMessagesContent.style.borderTop = 'solid 1px #c4c0c0';
@@ -285,10 +262,9 @@ function createMessageElement(sender_id, receiver_id, message, time, icon) {
     };
 
     ul.appendChild(messageContainer);
-    ul.scrollTop = ul.scrollHeight; // 窗口要自動拉到最下方
+    ul.scrollTop = ul.scrollHeight;
 };
 
-// 將即時訊息直接顯示在畫面中
 function appendMessageToUI(message, sender_id, time, icon) {
     const messageContainer = document.createElement('div');
     const textMessage = document.createElement('div');

@@ -11,16 +11,13 @@ changeProfilePic.addEventListener('click', function () {
 
 dataNameChange.addEventListener('click', function () {
     if (this.textContent === ' ') {
-        // 切換到編輯模式
         nameContent.contentEditable = true;
         nameContent.focus();
         this.textContent = '  ';
     } else {
-        // 完成編輯，將資料傳送到資料庫
         const newName = nameContent.textContent.trim();
         changeName(token, newName);
 
-        // 切換回非編輯模式
         nameContent.contentEditable = false;
         this.textContent = ' ';
     }
@@ -38,7 +35,6 @@ dataEmailChange.addEventListener('click', function () {
     }
 });
 
-// 修改姓名 API
 async function changeName(token, newName) {
     try {
         let response = await fetch('/api/changeName', {
@@ -65,17 +61,14 @@ async function changeName(token, newName) {
     };
 };
 
-// 修改圖片 API
 fileInput.addEventListener('change', async function () {
     const selectedFile = fileInput.files[0];
-
-    // 限制只能夠上傳圖片檔
     const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
     
     if (!allowedImageTypes.includes(selectedFile.type)) {
         alert('請選擇有效的圖片檔案（JPEG 或 PNG）');
-        fileInput.value = ''; // 清空檔案輸入框的值
-        return; // 中止後續的處理
+        fileInput.value = '';
+        return;
     } else {
         const formData = new FormData();
         formData.append('file', selectedFile);

@@ -5,39 +5,30 @@ const db = require('../modules/database.js');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 
-// 限制每秒最多一個請求
 const limiter = rateLimit({
     windowMs: 1000,
     max: 1,
     message: { error: '請避免短時間內多次操作' },
 });
 
-// JWT 金鑰設置
 const jwtSecretKey = process.env.JWT_SECRET_KEY;
-
-// 上傳檔案到 S3 的相關設置
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 const s3BucketName = process.env.AWS_S3_BUCKET_NAME;
-
-// 檔案上傳相關設定
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
-// 設置 AWS SDK
 AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_REGION,
 });
 
-// 驗證暱稱只能是中英文
 function checkNickname(name) {
     const nicknameRegex = /^[\u4e00-\u9fa5a-zA-Z]{2,10}$/;
     return nicknameRegex.test(name);
 }
 
-// 添加好友邏輯
 router.post('/api/addFriend', authToken, async (req, res) => {
     let { friendEmail } = req.body;
 
@@ -45,8 +36,7 @@ router.post('/api/addFriend', authToken, async (req, res) => {
         return res.status(400).json({ error: '請勿輸入自己的帳號' });
     };
 
-    try {  
-        // 分成查詢不到帳號、有查詢到且已有好友紀錄（且分狀態）、有查詢到無好友紀錄（新增資料）
+    try {
         const findFriendQuery = 
         `SELECT u.id AS friendId, fr.status AS friendRequestStatus
         FROM users u
@@ -64,12 +54,11 @@ router.post('/api/addFriend', authToken, async (req, res) => {
         if (friendRequestStatus === '待確認') {
             return res.status(400).json({ error: '等待對方回覆' });
         } else if (friendRequestStatus === '已拒絕') {
-            return res.status(400).json({ error: '等待對方回覆' }); // 不讓當事者知道被封鎖
+            return res.status(400).json({ error: '等待對方回覆' });
         } else if (friendRequestStatus === '已確認') {
             return res.status(400).json({ error: '雙方已為好友' });
         };
 
-        // 有查到帳號但好友申請無紀錄，則 INSERT
         const addFriendQuery = 'INSERT INTO friend_requests (sender_id, receiver_id, status) VALUES (?, ?, ?)';
         const addFriendResults = await db.query(addFriendQuery, [req.id, friendId, '待確認']);
 
@@ -80,7 +69,6 @@ router.post('/api/addFriend', authToken, async (req, res) => {
     };
 });
 
-// 變更好友申請狀態
 router.put('/api/addFriend', authToken, async (req, res) => {
     let { email, status } = req.body;
 
@@ -104,11 +92,9 @@ router.put('/api/addFriend', authToken, async (req, res) => {
     }
 });
 
-// 更改姓名
 router.post('/api/changeName', authToken, async (req, res) => {
     let { newName } = req.body;
 
-    // 如果格式或長度不符則返回錯誤訊息
     if (!checkNickname(newName)) {
         return res.status(400).json({ error: '請勿輸入錯誤暱稱格式' });
     };
@@ -127,7 +113,6 @@ router.post('/api/changeName', authToken, async (req, res) => {
     };
 });
 
-// 上傳 ICON
 router.post('/api/changeMemberIcon', upload.single('file'),  authToken, async (req, res) => {
     const file = req.file;
     const key = 'uploads/' + Date.now() + '-' + file.originalname;
@@ -136,15 +121,13 @@ router.post('/api/changeMemberIcon', upload.single('file'),  authToken, async (r
         return res.status(400).json({ error: '無選擇圖片上傳' });
     }
 
-    // 配置 S3 参数
     const params = {
         Bucket: s3BucketName,
         Key: 'uploads/' + Date.now() + '-' + file.originalname,
         Body: file.buffer,
-        ContentType: file.mimetype, // 根據檔案實際格式上傳
+        ContentType: file.mimetype,
     };
   
-    // 先判斷圖片，無誤後再上傳到資料庫
     s3.upload(params, async (err, data) => {
         if (err) {
             return res.status(400).json({ error: '上傳失敗' });
@@ -163,7 +146,6 @@ router.post('/api/changeMemberIcon', upload.single('file'),  authToken, async (r
     });
 });
 
-// 聊天窗口上傳圖片
 router.post('/api/addPicture', upload.single('file'),  authToken, async (req, res) => {
     const file = req.file;
     const roomID = req.body.roomID;
@@ -175,15 +157,13 @@ router.post('/api/addPicture', upload.single('file'),  authToken, async (req, re
         return res.status(404).json({ error: '無選擇圖片上傳' });
     }
 
-    // 配置 S3 参数
     const params = {
         Bucket: s3BucketName,
         Key: 'uploads/' + Date.now() + '-' + file.originalname,
         Body: file.buffer,
-        ContentType: file.mimetype, // 根據檔案實際格式上傳
+        ContentType: file.mimetype,
     };
   
-    // 先判斷圖片，無誤後再上傳到資料庫
     s3.upload(params, async (err, data) => {
         if (err) {
             return res.status(400).json({ error: '上傳失敗' });
@@ -202,7 +182,6 @@ router.post('/api/addPicture', upload.single('file'),  authToken, async (req, re
     });
 });
 
-// 驗證 token（並取出登入的 id）
 function authToken(req, res, next) {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
 

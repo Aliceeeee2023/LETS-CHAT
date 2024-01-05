@@ -36,7 +36,6 @@ let currentRoomId = null;
 let currentFriendName = null;
 let currentFriendIcon = null;
 
-// 建立與 Socket.IO 的連線
 const socket = io();
 
 logo.addEventListener('click', () => {
@@ -88,7 +87,6 @@ async function checkUsers(token) {
     };
 };
 
-// 主要選單按鈕設定
 function reset() {
     ul.innerHTML = '';
     chatInputContainer.innerHTML = '';
@@ -151,7 +149,6 @@ iconSetting.addEventListener('click', () => {
     showFriendList(token);
 });
 
-// 顯示好友列表
 async function showFriendList(token) {
     try {
         let response = await fetch('/api/showFriendList', {
@@ -165,7 +162,6 @@ async function showFriendList(token) {
         let data = await response.json();
         let friendData = data.friendEmails;
 
-        // 每次進入都先清空好友名單
         friendListCheck.innerHTML = '';
 
         if (response.status === 200) {
@@ -182,9 +178,7 @@ async function showFriendList(token) {
                 friendName.className = 'showFriendName';
 
                 friendList.addEventListener('click', () => {
-                    // 取得歷史訊息
                     getHistoryMessage(token, roomId)
-                    // 將好友加入 Socket.io room
                     socket.emit('join room', { room: roomId });
                     currentRoomId = roomId;
                     currentFriendId = friendId;

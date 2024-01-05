@@ -1,10 +1,8 @@
 body {
     margin: 0;
     font-family: "Noto Sans TC";
-    /* overflow-y: hidden; */
 }
 
-/* header CSS */
 .header {
     z-index: 1;
     position: sticky;
@@ -44,7 +42,6 @@ body {
     cursor: pointer;
 }
 
-/* footer CSS */
 .footer {
     position: fixed;
     bottom: 0;

@@ -2,7 +2,6 @@ AddFriendButton.addEventListener('click', () => {
     addFriend(token);
 });
 
-// 顯示待確認好友申請
 async function checkFriend(token) {
     try {
         let response = await fetch('/api/friendStatus', {
@@ -16,7 +15,6 @@ async function checkFriend(token) {
         let data = await response.json();
         let friendData = data.friendEmails;
 
-        // 每次進入都先清空待確認好友名單
         addFriendCheck.innerHTML = '';
 
         if (response.status === 200) {
@@ -24,7 +22,6 @@ async function checkFriend(token) {
                 let friendList = document.createElement('div');
                 friendList.className = 'addFriend-list';
 
-                // 幫每個邀請設置一個不重複的ID，在接受後刪除才能精準處理
                 const friendIdCheck = `id${index + 1}`;
                 friendList.setAttribute('friendIdCheck', friendIdCheck);
 
@@ -62,7 +59,6 @@ async function checkFriend(token) {
     };
 };
 
-// 處理好友申請（接受或拒絕）
 async function friendAnswerApi(email, status, name, friendIdCheck) {
     try {
         let response = await fetch('/api/addFriend', {

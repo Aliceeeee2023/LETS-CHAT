@@ -1,9 +1,7 @@
-/* header CSS */
 .header-nav_chat, .header-nav_logout {
     display: none;
 }
 
-/* main CSS */
 .main {
     flex: 1;
     background-image: url('../images/background-light.png');

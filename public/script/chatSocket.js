@@ -26,7 +26,6 @@ let peerRequestId = null;
 let peerAcceptId = null;
 
 
-// 將訊息視窗移動至最上方
 function updateMessageList(room, message, time) {
     const messageLists = document.querySelectorAll('.showMessageList');
 
@@ -53,7 +52,6 @@ function updateMessageList(room, message, time) {
 };
 
 
-// 通話相關按鈕處理
 callButton.addEventListener('click', async () => {
     try {
         socket.emit('call-request', { currentUserId, currentFriendId });
@@ -92,7 +90,6 @@ rejectCallButton.addEventListener('click', () => {
 
 hangupButton.addEventListener('click', () => {
     try {
-        // 傳遞接受方的 ID，以便後端知道是哪一方發送的掛斷通話通知
         socket.emit('hangup-call', { callRequestId, callAcceptId }); 
         endCall();
     } catch (error) {
@@ -101,7 +98,6 @@ hangupButton.addEventListener('click', () => {
 });
 
 
-// 對話窗口處理
 function showCallRequestModal(currentFriendName) {
     callRequestName.textContent = currentFriendName;
     callRequestIcon.style.backgroundImage = `url(${currentFriendIcon})`;
@@ -135,23 +131,20 @@ function closeCallInProgressModal() {
 function endCall() {
     closeCallInProgressModal();
 
-    // 關閉本地音訊流
     const localStream = localAudio.srcObject;
     const tracks = localStream.getTracks();
     tracks.forEach(track => track.stop());
 
-    // 關閉遠程音訊流
     const remoteStream = remoteAudio.srcObject;
     const remoteTracks = remoteStream.getTracks();
     remoteTracks.forEach(track => track.stop());
 
     if (currentCall) {
-        currentCall.close(); // 結束通話對象
+        currentCall.close();
     };
 };
 
 
-// 即時文字、圖片相關
 socket.on('chat message', (data) => {
     const { room, message, currentUserId, time } = data;
     
@@ -179,18 +172,14 @@ socket.on('update window pic', (data) => {
 });
 
 
-// 即時通話相關
 peer.on('open', (id) => {
-    // 將 Peer ID 發送到伺服器
     socket.emit('peer-id', { peerId: id, currentUserId: currentUserId  });
 });
 
 peer.on('call', (call) => {
-    // 獲取呼叫者的 Peer ID
     const callerPeerId = call.peer;
 
     if (callerPeerId === peerRequestId) {
-        // 獲取本地的聲音
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then((stream) => {
                 localAudio.srcObject = stream;
@@ -199,7 +188,6 @@ peer.on('call', (call) => {
                 return call.answer(stream);
             })
             .then(() => {
-                // answer 完成後，處理遠程聲音
                 call.on('stream', (remoteStream) => {
                     remoteAudio.srcObject = remoteStream;
                 });
@@ -215,7 +203,6 @@ socket.on('incoming-call', ({ callerId, callName, callIcon }) => {
     currentCallName = callName;
     currentCallIcon = callIcon;
 
-    // 顯示來自 callerId 的通話請求框
     showCallResponseModal(callerId, callName, callIcon);
 });
 
@@ -231,7 +218,6 @@ socket.on('start-webrtc-connection', (data) => {
     if (isCaller) {
         showCallInProgressModal(currentFriendName, currentFriendIcon);
 
-        // 在這裡觸發 WebRTC 連線的建立流程（假設已經有 localAudio 和 remoteAudio 元素用於顯示音訊）
         navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
             localAudio.srcObject = stream;
@@ -242,7 +228,6 @@ socket.on('start-webrtc-connection', (data) => {
                 connection.send('hi!');
               });
 
-            // 建立 Peer 對象
             const call = peer.call(acceptPeerId, stream);
 
             call.on('stream', (remoteStream) => {

@@ -96,7 +96,6 @@
             </main>
         </main>
 
-        <!-- 發出通話窗口顯示 -->
         <div id="callRequestModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <div class="callRequestIcon"></div>
@@ -106,7 +105,6 @@
             </div>
         </div>
 
-        <!-- 確認是否接聽通話 -->
         <div id="callResponseModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <div class="callResponseIcon"></div>
@@ -119,7 +117,6 @@
             </div>
         </div>
 
-        <!-- 通話進行中窗口顯示 -->
         <div id="callInProgressModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <div class="callProgressIcon"></div>
@@ -129,7 +126,6 @@
             </div>
         </div>
 
-        <!-- 取得本地、遠端音頻 -->
         <audio id="localAudio" autoplay></audio>
         <audio id="remoteAudio" autoplay></audio>
 
@@ -137,14 +133,13 @@
             <div class="footer-container">COPYRIGHT © 2023 LET'S CHAT</div>
         </footer>
 
-        <!-- 引用 socket.io 的客戶端套件 -->
         <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-        <!-- 引用 Peer.js 的客戶端套件，要自己找最新版本 -->
         <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.1/dist/peerjs.min.js"></script>
         <script src="script/chat.js"></script>
         <script src="script/chatMessage.js"></script>
         <script src="script/chatFriend.js"></script>
         <script src="script/chatSocket.js"></script>        
         <script src="script/chatSetting.js"></script>
+
     </body>
 </html>
