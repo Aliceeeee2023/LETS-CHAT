@@ -1,9 +1,14 @@
 const chat = document.querySelector('.header-nav_chat');
 const logout = document.querySelector('.header-nav_logout');
+const start = document.querySelector('.main-container_start');
 const token = localStorage.getItem('token');
 
 chat.addEventListener('click', () => {
     window.location.href = '/chat';
+});
+
+start.addEventListener('click', () => {
+    window.location.href = '/signup';
 });
 
 logout.addEventListener('click', () => {
