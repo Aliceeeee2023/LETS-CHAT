@@ -48,8 +48,6 @@ logout.addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.body.style.display = 'none';
-
     checkUsers(token).then(() => {
         socket.emit('set-current-user', { currentUserId });
         showFriendList(token);

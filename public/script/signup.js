@@ -5,7 +5,6 @@ const token = localStorage.getItem('token');
 
 document.addEventListener('DOMContentLoaded', () => {
     signupError.style.display = 'none';
-    document.body.style.display = 'none';
     checkUsers(token);
 });
 

@@ -1,3 +1,7 @@
+body {
+    display: none;
+}
+
 .chat-window {
     width: 870px;
     height: 510px;
@@ -269,16 +273,16 @@
     flex: 1;
     padding: 20px 30px 0px 50px;
 }
-.data-setting_name, .data-setting_email {
+.data-setting_name, .data-setting_status, .data-setting_email {
     display: flex;
 }
-.data-setting_email {
+.data-setting_status, .data-setting_email {
     margin-top: 10px;
 }
-.data-name, .data-email {
+.data-name, .data-status, .data-email {
     width: 43px;
 }
-.name-content, .email-content {
+.name-content, .status-content, .email-content {
     margin-left: 30px;
     padding: 0px 5px 0px 5px; 
 }
