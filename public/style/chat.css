@@ -51,7 +51,22 @@ body {
     background-repeat: no-repeat;
     background-position: center;
 }
-.chat-header_name, .chat-partner_name {
+.chat-header_container {
+    margin-left: 10px; 
+    width: 190px;   
+}
+.chat-header_name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #4b4848;
+}
+.chat-header_status {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.chat-partner_name {
     margin-left: 10px;
     font-size: 18px;
     font-weight: 700;

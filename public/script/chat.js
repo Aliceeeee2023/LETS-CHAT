@@ -4,6 +4,7 @@ const logout = document.querySelector('.header-nav_logout');
 const chatHeaderUser = document.querySelector('.chat-header_user');
 const chatHeaderIcon = document.querySelector('.chat-header_icon');
 const chatHeaderName = document.querySelector('.chat-header_name');
+const chatHeaderStatus = document.querySelector('.chat-header_status');
 const chatMessagesContent = document.querySelector('.chat-messages_content');
 const chatInputContainer = document.querySelector('.chat-input_container');  
 const MessagesList = document.querySelector('.chat-messagesList');
@@ -72,6 +73,7 @@ async function checkUsers(token) {
             myEmail = data.email;
             myStatus = data.status;
             chatHeaderName.textContent = myName;
+            chatHeaderStatus.textContent = myStatus;            
             chatHeaderIcon.style.backgroundImage = `url(${myIcon})`;
 
             document.body.style.display = 'block';     

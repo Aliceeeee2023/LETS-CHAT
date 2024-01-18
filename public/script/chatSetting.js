@@ -98,12 +98,14 @@ async function changeStatus(token, newStatus) {
             StatusContent.style.display = 'none';
 
             StatusContent.textContent = null;
+            chatHeaderStatus.textContent = null;
             myStatus = null;
         } else if (response.status === 200 && newStatus !== "") {
             StatusNoContent.style.display = 'none';
             StatusContent.style.display = 'block';
 
             StatusContent.textContent = newStatus;
+            chatHeaderStatus.textContent = newStatus;
             myStatus = newStatus;
         } else {
             addFriendResult.textContent = data.error;
