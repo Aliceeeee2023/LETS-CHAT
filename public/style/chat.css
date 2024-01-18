@@ -282,11 +282,20 @@ body {
 .data-name, .data-status, .data-email {
     width: 43px;
 }
-.name-content, .status-content, .email-content {
+.name-content, .status-content, .status-nocontent, .email-content {
     margin-left: 30px;
     padding: 0px 5px 0px 5px; 
 }
-.data-name_change, .data-email_change {
+.status-content {
+    display: none;
+    max-width: 180px;
+    word-wrap: break-word;
+}
+.status-nocontent {
+    display: none;
+    color: gray;
+}
+.data-name_change, .data-status_change, .data-email_change {
     margin-left: 15px;
     padding: 0px 5px 0px 5px; 
     height: 25px;

@@ -1,6 +1,9 @@
 const dataEmailChange = document.querySelector('.data-email_change');
 const nameContent = document.querySelector('.name-content');
 const dataNameChange = document.querySelector('.data-name_change');
+const StatusContent = document.querySelector('.status-content');
+const StatusNoContent = document.querySelector('.status-nocontent');
+const dataStatusChange = document.querySelector('.data-status_change');
 const profilePic = document.getElementById('profilePic');
 const changeProfilePic = document.getElementById('changeProfilePic');
 const fileInput = document.getElementById('fileInput');
@@ -19,6 +22,23 @@ dataNameChange.addEventListener('click', function () {
         changeName(token, newName);
 
         nameContent.contentEditable = false;
+        this.textContent = ' ';
+    }
+});
+
+dataStatusChange.addEventListener('click', function () {
+    if (this.textContent === ' ') {
+        StatusNoContent.style.display = 'none';
+        StatusContent.style.display = 'block';
+
+        StatusContent.contentEditable = true;
+        StatusContent.focus();
+        this.textContent = '  ';
+    } else {
+        const newStatus = StatusContent.textContent.trim();
+        changeStatus(token, newStatus);
+
+        StatusContent.contentEditable = false;
         this.textContent = ' ';
     }
 });
@@ -52,6 +72,39 @@ async function changeName(token, newName) {
             chatHeaderName.textContent = newName;
 
             myName = newName;
+        } else {
+            addFriendResult.textContent = data.error;
+            // console.error(data.error);
+        };
+    } catch (error) {
+        console.error('錯誤：', error);
+    };
+};
+
+async function changeStatus(token, newStatus) {
+    try {
+        let response = await fetch('/api/changeStatus', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ newStatus }),
+        });
+        const data = await response.json();
+
+        if (response.status === 200 && newStatus == "") {
+            StatusNoContent.style.display = 'block';
+            StatusContent.style.display = 'none';
+
+            StatusContent.textContent = null;
+            myStatus = null;
+        } else if (response.status === 200 && newStatus !== "") {
+            StatusNoContent.style.display = 'none';
+            StatusContent.style.display = 'block';
+
+            StatusContent.textContent = newStatus;
+            myStatus = newStatus;
         } else {
             addFriendResult.textContent = data.error;
             // console.error(data.error);

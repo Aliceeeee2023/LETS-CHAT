@@ -113,6 +113,27 @@ router.post('/api/changeName', authToken, async (req, res) => {
     };
 });
 
+router.post('/api/changeStatus', authToken, async (req, res) => {
+    let { newStatus } = req.body;
+
+    if (newStatus === "") {
+        newStatus = null;
+    };
+
+    try {  
+        const changeStatusQuery = 
+        `UPDATE users
+        SET status = ?
+        WHERE id = ?;`;
+        const checkFriendResults = await db.query(changeStatusQuery, [newStatus, req.id]);
+
+        return res.status(200).json({ message: '已修改完成' });
+    } catch (error) {
+        console.error('錯誤：', error);
+        return res.status(500).json({ error: '伺服器內部錯誤' });
+    };
+});
+
 router.post('/api/changeMemberIcon', upload.single('file'),  authToken, async (req, res) => {
     const file = req.file;
     const key = 'uploads/' + Date.now() + '-' + file.originalname;

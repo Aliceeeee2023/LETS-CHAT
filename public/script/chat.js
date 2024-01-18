@@ -30,6 +30,7 @@ const ul = document.querySelector('.ul');
 let myName = null;
 let myEmail = null;
 let myIcon = null;
+let myStatus = null;
 let currentUserId = null;
 let currentFriendId = null;
 let currentRoomId = null;
@@ -69,6 +70,7 @@ async function checkUsers(token) {
             myName = data.name;
             myIcon = data.icon;
             myEmail = data.email;
+            myStatus = data.status;
             chatHeaderName.textContent = myName;
             chatHeaderIcon.style.backgroundImage = `url(${myIcon})`;
 
@@ -142,6 +144,15 @@ iconSetting.addEventListener('click', () => {
     emailContent.textContent = myEmail;
     chatMessagesContent.style.borderTop = 'solid 1px #c4c0c0';
     chatMessagesContent.style.borderBottom = 'none';
+
+    if(myStatus == null) {
+        StatusContent.style.display = 'none';
+        StatusNoContent.style.display = 'block';
+    } else {
+        StatusContent.style.display = 'block';
+        StatusNoContent.style.display = 'none';    
+        StatusContent.textContent = myStatus;
+    };
 
     reset();
     showFriendList(token);

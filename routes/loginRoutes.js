@@ -46,7 +46,7 @@ router.put('/api/login', limiter, async (req, res) => {
 
 router.get('/api/login', authToken, async (req, res) => {
     try {
-        const checkLoginData = 'SELECT id, name, email, icon FROM users WHERE email = ?';
+        const checkLoginData = 'SELECT id, name, email, icon, status FROM users WHERE email = ?';
         const LoginResults = await db.query(checkLoginData, [req.email]);
 
         if (LoginResults[0].length === 0) {
@@ -57,8 +57,9 @@ router.get('/api/login', authToken, async (req, res) => {
         let dbName = LoginResults[0]['0'].name;
         let dbEmail = LoginResults[0]['0'].email;
         let dbIcon = LoginResults[0]['0'].icon;
+        let dbStatus = LoginResults[0]['0'].status;
 
-        return res.status(200).json({ "email": dbEmail, "name": dbName, "userId": dbId, "icon": dbIcon});
+        return res.status(200).json({ "email": dbEmail, "name": dbName, "userId": dbId, "icon": dbIcon, "status": dbStatus});
     } catch (error) {
         console.error('錯誤：', error);
         return res.status(500).json({ error: '伺服器內部錯誤' });
