@@ -51,26 +51,22 @@ body {
     background-repeat: no-repeat;
     background-position: center;
 }
-.chat-header_container {
+.chat-header_container, .chat-partner_container {
     margin-left: 10px; 
     width: 190px;   
 }
-.chat-header_name {
-    font-size: 18px;
+.chat-header_name, .chat-partner_name {
+    font-size: 16px;
     font-weight: 700;
     color: #4b4848;
 }
-.chat-header_status {
+.chat-header_status, .chat-partner_status {
+    color: rgb(124, 121, 121);
     font-size: 14px;
+    font-weight: 400;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-.chat-partner_name {
-    margin-left: 10px;
-    font-size: 18px;
-    font-weight: 700;
-    color: #4b4848;
 }
 .callButton {
     display: none;
@@ -128,9 +124,21 @@ body {
     background-repeat: no-repeat;
     background-position: center;
 }
+.show-friend_container {
+    margin-left: 10px; 
+    width: 190px;   
+}
 .showFriendName {
-    margin-left: 10px;
     font-size: 16px;
+    font-weight: 700;
+    color: #4b4848;
+}
+.show-friend_status {
+    color: rgb(124, 121, 121);
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .showData {
     margin-left: 10px; 
@@ -140,6 +148,11 @@ body {
     display: flex;
     align-items: center;
 }
+.messageFriendName {
+    font-size: 16px;
+    font-weight: 700;
+    color: #4b4848;
+}
 .showFriendTime {
     font-size: 12px;
     line-height: 16px;
@@ -148,6 +161,7 @@ body {
 .showFriendMessage {
     width: 182px;
     font-size: 14px;
+    color: rgb(124, 121, 121);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

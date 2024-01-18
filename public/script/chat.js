@@ -20,6 +20,7 @@ const chatMessagesSetting  = document.querySelector('.chat-messages_setting');
 const chatHeaderSetting = document.querySelector('.chat-header_setting');
 const chatPartnerIcon = document.querySelector('.chat-partner_icon');
 const chatPartnerName = document.querySelector('.chat-partner_name');
+const chatPartnerStatus = document.querySelector('.chat-partner_status');
 const settingPic = document.querySelector('.setting-pic');
 const AddFriendButton = document.querySelector('.addFriend-button');
 const addFriendResult = document.querySelector('.addFriend-result');
@@ -93,6 +94,7 @@ function reset() {
     ul.innerHTML = '';
     chatInputContainer.innerHTML = '';
     chatPartnerName.innerHTML = '';
+    chatPartnerStatus.innerHTML = '';
     chatPartnerIcon.style.display = 'none';
     callButton.style.display = 'none';
 };
@@ -176,7 +178,7 @@ async function showFriendList(token) {
         friendListCheck.innerHTML = '';
 
         if (response.status === 200) {
-            friendData.forEach(({ friendId, name, icon, roomId }) => {
+            friendData.forEach(({ friendId, name, icon, status, roomId }) => {
                 let friendList = document.createElement('div');
                 friendList.className = 'showFriendList';
             
@@ -184,9 +186,16 @@ async function showFriendList(token) {
                 friendIcon.className = 'showFriendIcon';
                 friendIcon.style.backgroundImage = `url(${icon})`;
 
+                let friendContainer = document.createElement('div');
+                friendContainer.className = 'show-friend_container';
+
                 let friendName = document.createElement('div');
                 friendName.textContent = name;
                 friendName.className = 'showFriendName';
+
+                let friendStatus = document.createElement('div');
+                friendStatus.textContent = status;
+                friendStatus.className = 'show-friend_status';
 
                 friendList.addEventListener('click', () => {
                     getHistoryMessage(token, roomId)
@@ -196,11 +205,13 @@ async function showFriendList(token) {
 
                     chatIndex.style.display = 'none';
                     ul.innerHTML= '';
-                    showTalkPage(name, icon, roomId, friendId);
+                    showTalkPage(name, icon, status, roomId, friendId);
                 });
             
+                friendContainer.appendChild(friendName);
+                friendContainer.appendChild(friendStatus);                
                 friendList.appendChild(friendIcon);
-                friendList.appendChild(friendName);
+                friendList.appendChild(friendContainer);
                 friendListCheck.appendChild(friendList);
             });
         } else {

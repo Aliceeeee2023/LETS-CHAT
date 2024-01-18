@@ -28,8 +28,8 @@ async function getMessageList(token) {
         if (response.status === 200) {
             messageListCheck.innerHTML= '';
 
-            messageList.forEach(({ friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime }) => {
-                createMessageList(friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime);
+            messageList.forEach(({ friend_id, room_id, name, friendEmail, icon, status, finalMessage, finalMessageTime }) => {
+                createMessageList(friend_id, room_id, name, friendEmail, icon, status, finalMessage, finalMessageTime);
             });
         } else {
             // console.error('錯誤：', data.error);
@@ -39,7 +39,7 @@ async function getMessageList(token) {
     };
 };
 
-function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMessage, finalMessageTime) {
+function createMessageList(friend_id, room_id, name, friendEmail, icon, status, finalMessage, finalMessageTime) {
     const formattedDateTime = formatNowDateTime(finalMessageTime);
 
     let messageList = document.createElement('div');
@@ -80,7 +80,8 @@ function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMes
         currentFriendId = friend_id;
 
         ul.innerHTML= '';
-        showTalkPage(name, icon, room_id, friend_id);
+        showTalkPage(name, icon, status, room_id, friend_id);
+        console.log(name, icon, status, room_id, friend_id);
     });
 
     messageDataContainer.appendChild(messageFriendName);
@@ -92,7 +93,7 @@ function createMessageList(friend_id, room_id, name, friendEmail, icon, finalMes
     messageListCheck.appendChild(messageList);
 };
 
-function showTalkPage(name, icon, roomId, friendId) {
+function showTalkPage(name, icon, status, roomId, friendId) {
     currentFriendName = name;
     currentFriendIcon = icon;
     chatHeaderSetting.innerHTML = '';
@@ -100,6 +101,7 @@ function showTalkPage(name, icon, roomId, friendId) {
     chatMessagesSetting.style.display = 'none';
     chatPartnerIcon.style.backgroundImage = `url(${icon})`;
     chatPartnerName.textContent = name;
+    chatPartnerStatus.textContent = status;
     callButton.style.display = 'block';
 
     chatInputContainer.innerHTML = '';
