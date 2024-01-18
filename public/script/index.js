@@ -8,7 +8,7 @@ chat.addEventListener('click', () => {
 });
 
 start.addEventListener('click', () => {
-    window.location.href = '/signup';
+    window.location.href = '/login';
 });
 
 logout.addEventListener('click', () => {
