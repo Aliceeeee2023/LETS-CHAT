@@ -111,6 +111,9 @@ function showTalkPage(name, icon, status, roomId, friendId) {
     const leftContainer = document.createElement('div');
     leftContainer.className = 'left-container';
 
+    const emojiButton = document.createElement('div');
+    emojiButton.className = 'upload-emoji';
+
     const uploadButton = document.createElement('div');
     uploadButton.className = 'upload-button';
 
@@ -119,6 +122,20 @@ function showTalkPage(name, icon, status, roomId, friendId) {
     fileChatInput.style.display = 'none';
 
     fileChatInput.addEventListener('change', handleFileSelect);
+
+    emojiButton.addEventListener('click', () => {
+        if (getComputedStyle(emoji).display === 'none') {
+            emoji.style.display = 'block';
+        } else {
+            emoji.style.display = 'none';
+        };
+    });
+
+    document.addEventListener('click', (event) => {
+        if (getComputedStyle(emoji).display === 'block' && !emojiButton.contains(event.target) && !emoji.contains(event.target)) {
+            emoji.style.display = 'none';
+        };
+    });
 
     uploadButton.addEventListener('click', () => {
         fileChatInput.click();
@@ -159,7 +176,8 @@ function showTalkPage(name, icon, status, roomId, friendId) {
             };
         };
     };
-
+    
+    leftContainer.appendChild(emojiButton);
     leftContainer.appendChild(uploadButton);
     leftContainer.appendChild(fileChatInput);
 

@@ -13,6 +13,7 @@ body {
     border-right: 1px solid #c4c0c0;
     border-radius: 8px;
     overflow: hidden;
+    position: relative;
 }
 .chat-header, .chat-message, .chat-footer {
     display: flex;
@@ -436,6 +437,19 @@ body {
     display: flex;
     align-items: center;
 }
+.left-container {
+    display: flex;
+}
+.upload-emoji {
+    background-image: url('../images/emoji04.png');
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    margin: 0px 5px 0px 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 .upload-button {
     background-image: url('../images/pic-icon.png');
     width: 50px;
@@ -471,6 +485,31 @@ body {
     background-image: url('../images/send-icon.png');
     cursor: pointer;
     margin: 0px 5px 0px 5px;
+}
+
+.emoji {
+    position: absolute;
+    bottom: 48px;
+    left: 300px;
+    width: 200px;
+    height: 188px;
+    border-radius: 8px;
+    display: none;
+    background-color: white;
+    border: 1px solid #c4c0c0;
+    z-index: 1000;
+}
+.emoji-container {
+    display: flex;
+    justify-content: space-around;
+}
+.emoji span {
+    margin: 8px 8px 0px 8px;
+}
+.emoji img {
+    width: 100%;
+    height: auto;
+    cursor: pointer;
 }
 
 .modal {

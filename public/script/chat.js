@@ -28,6 +28,7 @@ const addFriendCheck = document.querySelector('.addFriend-check');
 const messageListCheck = document.querySelector('.messagesList-check');
 const friendListCheck = document.querySelector('.friendList-check');
 const ul = document.querySelector('.ul');
+const emoji = document.querySelector('.emoji');
 
 let myName = null;
 let myEmail = null;
