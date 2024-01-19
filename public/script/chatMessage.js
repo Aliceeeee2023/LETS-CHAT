@@ -123,7 +123,9 @@ function showTalkPage(name, icon, status, roomId, friendId) {
 
     fileChatInput.addEventListener('change', handleFileSelect);
 
-    emojiButton.addEventListener('click', () => {
+    emojiButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+
         if (getComputedStyle(emoji).display === 'none') {
             emoji.style.display = 'block';
         } else {

@@ -492,7 +492,7 @@ body {
     bottom: 48px;
     left: 300px;
     width: 200px;
-    height: 188px;
+    height: 168px;
     border-radius: 8px;
     display: none;
     background-color: white;
@@ -501,14 +501,11 @@ body {
 }
 .emoji-container {
     display: flex;
+    padding-left: 8px;
     justify-content: space-around;
 }
 .emoji span {
-    margin: 8px 8px 0px 8px;
-}
-.emoji img {
-    width: 100%;
-    height: auto;
+    margin: 8px 8px 0px 0px;
     cursor: pointer;
 }
 
