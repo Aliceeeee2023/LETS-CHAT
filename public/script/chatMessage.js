@@ -12,6 +12,10 @@ function isImageURL(url) {
     return /\.(jpeg|jpg|gif|png)$/i.test(url);
 };
 
+function isVideoURL(url) {
+    return /\.(mp4|webm)$/i.test(url);
+};
+
 async function getMessageList(token) {
     try {
         let response = await fetch('/api/getMessageList', {
@@ -61,7 +65,9 @@ function createMessageList(friend_id, room_id, name, friendEmail, icon, status, 
 
     if (isImageURL(finalMessage)) {
         messageFriendMessage.textContent = '已傳送圖片';
-    } else {
+    } else if (isVideoURL(finalMessage)) {
+        messageFriendMessage.textContent = '已傳送影片';
+    } else{
         messageFriendMessage.textContent = finalMessage;
     };
 
@@ -143,11 +149,15 @@ function showTalkPage(name, icon, status, roomId, friendId) {
     });
 
     async function handleFileSelect() {
+        const maxFileSizeMB = 5;
         const selectedFile = fileChatInput.files[0];
-        const selectedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        const selectedFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm'];
 
         if (!selectedFileTypes.includes(selectedFile.type)) {
-            alert('僅能選擇圖片檔');
+            alert('僅能選擇圖片或影音檔');
+            return;
+        } else if (selectedFile.size > maxFileSizeMB * 1024 * 1024) {
+            alert('請勿上傳超過 5MB 的檔案');
             return;
         } else {
             const formData = new FormData();
@@ -157,7 +167,7 @@ function showTalkPage(name, icon, status, roomId, friendId) {
             formData.append('receiverID', currentFriendId);
 
             try {
-                const response = await fetch('/api/addPicture', {
+                const response = await fetch('/api/addFile', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -264,6 +274,13 @@ function createMessageElement(sender_id, receiver_id, message, time, icon) {
         if (isImageURL(message)) {
             textMessage.className = 'chatImageRight';
             textMessage.style.backgroundImage = `url(${message})`;
+        } else if (isVideoURL(message)) {
+            const videoElement = document.createElement('video');
+            videoElement.className = 'chatVideoRight';
+            videoElement.controls = true;
+            videoElement.innerHTML = `<source src="${message}" type="video/mp4">`;
+        
+            textMessage.appendChild(videoElement);
         } else {
             textMessage.textContent = message;
             textMessage.className = 'textMessageRight'
@@ -280,6 +297,13 @@ function createMessageElement(sender_id, receiver_id, message, time, icon) {
         if (isImageURL(message)) {
             textMessage.className = 'chatImageLeft';
             textMessage.style.backgroundImage = `url(${message})`;
+        } else if (isVideoURL(message)) {
+            const videoElement = document.createElement('video');
+            videoElement.className = 'chatVideoLeft';
+            videoElement.controls = true;
+            videoElement.innerHTML = `<source src="${message}" type="video/mp4">`;
+        
+            textMessage.appendChild(videoElement);
         } else {
             textMessage.textContent = message;
             textMessage.className = 'textMessageLeft'
@@ -308,6 +332,13 @@ function appendMessageToUI(message, sender_id, time, icon) {
         if (isImageURL(message)) {
             textMessage.className = 'chatImageRight';
             textMessage.style.backgroundImage = `url(${message})`;
+        } else if (isVideoURL(message)) {
+            const videoElement = document.createElement('video');
+            videoElement.className = 'chatVideoRight';
+            videoElement.controls = true;
+            videoElement.innerHTML = `<source src="${message}" type="video/mp4">`;
+        
+            textMessage.appendChild(videoElement);
         } else {
             textMessage.textContent = message;
             textMessage.className = 'textMessageRight'
@@ -324,6 +355,13 @@ function appendMessageToUI(message, sender_id, time, icon) {
         if (isImageURL(message)) {
             textMessage.className = 'chatImageLeft';
             textMessage.style.backgroundImage = `url(${message})`;
+        } else if (isVideoURL(message)) {
+            const videoElement = document.createElement('video');
+            videoElement.className = 'chatVideoLeft';
+            videoElement.controls = true;
+            videoElement.innerHTML = `<source src="${message}" type="video/mp4">`;
+        
+            textMessage.appendChild(videoElement);
         } else {
             textMessage.textContent = message;
             textMessage.className = 'textMessageLeft'

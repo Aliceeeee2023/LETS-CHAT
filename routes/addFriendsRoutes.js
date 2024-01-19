@@ -167,7 +167,7 @@ router.post('/api/changeMemberIcon', upload.single('file'),  authToken, async (r
     });
 });
 
-router.post('/api/addPicture', upload.single('file'),  authToken, async (req, res) => {
+router.post('/api/addFile', upload.single('file'),  authToken, async (req, res) => {
     const file = req.file;
     const roomID = req.body.roomID;
     const senderID = req.body.senderID;

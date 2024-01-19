@@ -366,7 +366,7 @@ body {
     align-self: flex-end;
     margin: 0px 10px 3px 10px;
 }
-.textMessageLeft, .textMessageRight, .chatImageLeft,.chatImageRight {
+.textMessageLeft, .textMessageRight, .chatImageLeft, .chatImageRight {
     font-size: 16px;
     border-radius: 15px;
     padding: 5px 12px 5px 12px;
@@ -399,6 +399,19 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     background-color: #c1ecc1;
+}
+.chatVideoLeft {
+    max-width: 300px;
+    max-height: 300px;
+    margin-left: 10px;
+    text-align: left;
+    border-radius: 15px;
+}
+.chatVideoRight {
+    max-width: 300px;
+    max-height: 300px;
+    text-align: right;
+    border-radius: 15px;
 }
 
 .chat-footer {

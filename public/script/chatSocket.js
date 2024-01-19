@@ -42,6 +42,8 @@ function updateMessageList(room, message, time) {
 
             if (isImageURL(message)) {
                 messageFriendMessage.textContent = '已傳送圖片';
+            } else if (isVideoURL(message)) {
+                messageFriendMessage.textContent = '已傳送影片';
             } else {
                 messageFriendMessage.textContent = message;
             };
