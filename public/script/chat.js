@@ -93,6 +93,7 @@ async function checkUsers(token) {
 
 function reset() {
     ul.innerHTML = '';
+    ul.style.display = 'none';    
     chatInputContainer.innerHTML = '';
     chatPartnerName.innerHTML = '';
     chatPartnerStatus.innerHTML = '';

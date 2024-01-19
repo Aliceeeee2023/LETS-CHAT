@@ -102,6 +102,7 @@ function showTalkPage(name, icon, status, roomId, friendId) {
     currentFriendName = name;
     currentFriendIcon = icon;
     chatHeaderSetting.innerHTML = '';
+    ul.style.display = 'block';
     chatPartnerIcon.style.display = 'block';
     chatMessagesSetting.style.display = 'none';
     chatPartnerIcon.style.backgroundImage = `url(${icon})`;
