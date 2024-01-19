@@ -81,7 +81,6 @@ function createMessageList(friend_id, room_id, name, friendEmail, icon, status, 
 
         ul.innerHTML= '';
         showTalkPage(name, icon, status, room_id, friend_id);
-        console.log(name, icon, status, room_id, friend_id);
     });
 
     messageDataContainer.appendChild(messageFriendName);
@@ -199,6 +198,13 @@ function showTalkPage(name, icon, status, roomId, friendId) {
 
     chatInputContainer.appendChild(chatInputDiv);
     chatInputContainer.appendChild(sendButton);
+
+    emoji.addEventListener('click', function(event) {
+        if (event.target.classList.contains('emoji-span')) {
+            const selectedEmoji = event.target.textContent;
+            chatInput.value += selectedEmoji;
+        };
+    });
 
     sendButton.addEventListener('click', () => {
         const message = chatInput.value.trim();
